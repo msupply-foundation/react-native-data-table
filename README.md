@@ -1,1 +1,1 @@
-react-native-app-navigator
+react-native-data-table
