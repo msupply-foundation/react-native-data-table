@@ -1,0 +1,58 @@
+{
+  "name": "react-native-app-navigator",
+  "version": "0.1.2",
+  "description": "A router/navigator for react native apps, based on NavigationExperimental, with a simpler interface",
+  "repository": "https://github.com/sussol/react-native-app-navigator.git",
+  "author": "Sustainable Solutions (NZ) Ltd.",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "jest": {
+    "preprocessorIgnorePatterns": [
+      "node_modules/enzyme"
+    ],
+    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
+    "setupEnvScriptFile": "node_modules/react-native/jestSupport/env.js",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "packager/react-packager/src/Activity/"
+    ],
+    "globals": {
+      "__DEV__": true
+    },
+    "unmockedModulePathPatterns": [
+      "react",
+      "react-dom",
+      "react-addons-test-utils",
+      "react-native-mock",
+      "enzyme"
+    ]
+  },
+  "dependencies": {
+    "react-native-vector-icons": "^2.0.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.17.0",
+    "babel-eslint": "^6.1.2",
+    "babel-jest": "^13.2.2",
+    "babel-polyfill": "^6.9.1",
+    "babel-preset-react-native": "^1.9.0",
+    "enzyme": "^2.4.1",
+    "eslint": "^2.9.0",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.7.0",
+    "eslint-plugin-jsx-a11y": "^1.5.5",
+    "eslint-plugin-react": "^5.2.2",
+    "jest": "^16.0.1",
+    "jest-cli": "^16.0.1",
+    "react-addons-test-utils": "~15.3.1",
+    "react-native-mock": "0.2.4",
+    "sinon": "^1.17.3"
+  },
+  "peerDependencies": {
+    "react": "^15.3.2",
+    "react-native": "^0.35.0"
+  }
+}
