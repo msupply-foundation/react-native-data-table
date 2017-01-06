@@ -52,12 +52,10 @@ export class Row extends React.Component {
       return (
         <TouchableOpacity
           {...touchableOpacityProps}
-          style={[defaultStyles.row, style]}
+          style={[defaultStyles.row, { flexDirection: 'row' }, style]}
           onPress={this.onPress}
         >
-          <View style={defaultStyles.cellContainer}>
-            {children}
-          </View>
+          {children}
         </TouchableOpacity>
       );
     }
