@@ -7,6 +7,19 @@ react-native-data-table provides a number of components for constructing a table
 
 ![data table example](https://cloud.githubusercontent.com/assets/7684221/22765506/8e24ca76-eed5-11e6-97fe-5b0da7687aca.png)
 
+### DataTable
+This component acts as a wrapper around the React Native ListView component. All the other components in this library should be used in the renderRow and renderRow and renderHeader.
+
+| Prop Name          | Type    | Description                                                               |
+| ------------------ | ------- | ------------------------------------------------------------------------- |
+| ListView Props     | -       | Will pass through any extra props to ListView                             |
+| listViewStyle      | style   | Will override styling of the ListView within the DataTable                |
+| style              | style   | Style of the DataTable container (View)                                   |
+| dataSource         | object (required) | See [ListView](https://facebook.github.io/react-native/docs/listview.html) |
+| renderRow          | func (required)   | See [RenderRow](https://facebook.github.io/react-native/docs/listview.html#renderrow). Function can return anything, but the Cell components in this library are to make it easy for constructing a table  |
+| renderHeader       | func    | Provide this function with appropriate return to make a table header      |
+| refCallback        | func    | CallBack for utilising reference of the inner TextInput                   |
+
 ### Cell
 Renders a Cell that supports having a string as children, or any component.
 
@@ -27,9 +40,9 @@ Renders a CheckableCell that renders either renderIsChecked or renderIsNotChecke
 | ------------------ | ------- | ------------------------------------------------------------------------- |
 | isChecked          | boolean | Used to set the initial state of the cell when the component mounts or rerenders (e.g. table sort order change) |
 | isDisabled         | boolean | Will cause renderDisabled to be shown in the cell                         |
-| textStyle          | style   | Will override styling of the Text label within the button                 |
 | style              | style   | Style of the CheckableCell (View props)                                   |
 | width              | number  | Gives width relative to other cells in the same container (via flexbox)   |
+| onPress            | func    | CallBack Function for handling user pressing CheckableCell                |
 | renderIsChecked    | object  | Object is rendered as child in CheckableCell if checked                   |
 | renderIsNotChecked | object  | Object is rendered as child in CheckableCell if not checked               |
 | renderDisabled     | object  | Object is rendered as child in CheckableCell if isDisabled is true        |
@@ -40,25 +53,12 @@ Renders a cell with an editable text input. Has own state for managing TextInput
 | Prop Name          | Type    | Description                                                               |
 | ------------------ | ------- | ------------------------------------------------------------------------- |
 | TextInput Props    | -       | Will pass through any extra props to TextInput                            |
-| textStyle          | style   | Will override styling of the Text label within the button                 |
+| textStyle          | style   | Will override styling of the TextInput within the button                 |
 | style              | style   | Style of the EditableCell (View props)                                   |
 | width              | number  | Gives width relative to other cells in the same container (via flexbox)   |
 | onEndEditing       | func    | Will be called with 2 params: target and the newValue on end of editing. This function should run code to persist the change to local storage                                                     |
 | target             | object  | Data object of the row/record being edited                                |
 | value              | string or number  | Provides initial value. Will change what cell shows if prop changes|
-| refCallback        | func    | CallBack for utilising reference of the inner TextInput                   |
-
-### DataTable
-This component acts as a wrapper around the React Native ListView component. All the other components in this library should be used in the renderRow and renderRow and renderHeader.
-
-| Prop Name          | Type    | Description                                                               |
-| ------------------ | ------- | ------------------------------------------------------------------------- |
-| ListView Props     | -       | Will pass through any extra props to ListView                             |
-| listViewStyle      | style   | Will override styling of the ListView within the DataTable                |
-| style              | style   | Style of the DataTable container (View)                                   |
-| dataSource         | object (required) | See [ListView](https://facebook.github.io/react-native/docs/listview.html) |
-| renderRow          | func (required)   | See [RenderRow](https://facebook.github.io/react-native/docs/listview.html#renderrow). Function can return anything, but the Cell components in this library are to make it easy for constructing a table  |
-| renderHeader       | func    | Provide this function with appropriate return to make a table header      |
 | refCallback        | func    | CallBack for utilising reference of the inner TextInput                   |
 
 ### Header
@@ -79,6 +79,18 @@ This could also be thought of as "column headers", as that is what this componen
 
 ### Row
 A container to be used in renderRow function in DataTable renderRow Prop. Has internal state that knows whether the row is expanded or not. Toggled on press. Will only render an expansion if provided.
+
+```
+renderRow(record) {
+  <Row>
+    <Cell>record.code</Cell>
+    <Cell>record.name</Cell>
+    <EditableCell
+      value={record.quantity}
+    />
+  </Row>
+}
+```
 
 | Prop Name       | Type    | Description                                                               |
 | --------------- | ------- | ------------------------------------------------------------------------- |
