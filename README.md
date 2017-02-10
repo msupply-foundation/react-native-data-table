@@ -107,5 +107,5 @@ Literally just a wrapper for View. To be used in the Row prop 'renderExpansion'.
 | ------------------ | ------- | ------------------------------------------------------------------------- |
 | View Props         | -       | Will pass through any extra props to View                                 |
 
-### Table
+### TableButton
 Like expansion, this is essentially just a wrapper around TouchableOpacity with a default flex value of 1. Which I believe became redundant at some point in RN development.
