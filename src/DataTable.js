@@ -22,6 +22,7 @@ export function DataTable(props) {
     refCallback,
     renderRow,
     scrollable,
+    scrollableStyle,
     ...listViewProps,
   } = props;
   const renderListView = (props) => (
@@ -40,7 +41,7 @@ export function DataTable(props) {
     <View style={[defaultStyles.verticalContainer, style]}>
       {
         scrollable ?
-          <ScrollView horizontal>{renderListView()}</ScrollView> :
+          <ScrollView style={scrollableStyle} horizontal>{renderListView()}</ScrollView> :
           renderListView()
       }
     </View>
@@ -50,6 +51,7 @@ export function DataTable(props) {
 DataTable.propTypes = {
   style: View.propTypes.style,
   listViewStyle: React.PropTypes.number,
+  scrollableStyle: React.PropTypes.style,
   refCallback: React.PropTypes.func,
   renderHeader: React.PropTypes.func,
   dataSource: React.PropTypes.object.isRequired,
