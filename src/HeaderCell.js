@@ -40,16 +40,17 @@ export function HeaderCell(props) {
     text,
     isSelected,
     isAscending,
+    arrowStyle,
     ...containerProps,
   } = props;
 
   function renderSortArrow() {
     if (isSelected) {
       // isAscending = true = a to z
-      if (isAscending) return <Icon name="sort-asc" size={16} style={defaultStyles.icon} />;
-      return <Icon name="sort-desc" size={16} style={defaultStyles.icon} />;
+      if (isAscending) return <Icon name="sort-asc" size={16} style={[defaultStyles.icon, arrowStyle]} />;
+      return <Icon name="sort-desc" size={16} style={[defaultStyles.icon, arrowStyle]} />;
     }
-    return <Icon name="sort" size={16} style={defaultStyles.icon} />;
+    return <Icon name="sort" size={16} style={[defaultStyles.icon, arrowStyle]} />;
   }
 
   if (typeof onPress === 'function') {
@@ -80,6 +81,7 @@ HeaderCell.propTypes = {
   isAscending: React.PropTypes.bool,
   style: View.propTypes.style,
   textStyle: Text.propTypes.style,
+  arrowStyle: Text.propTypes.style,
   width: React.PropTypes.number,
   onPress: React.PropTypes.func,
   text: React.PropTypes.string,
