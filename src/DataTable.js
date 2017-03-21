@@ -22,27 +22,29 @@ export function DataTable(props) {
     refCallback,
     renderRow,
     scrollable,
-    scrollableStyle,
     ...listViewProps,
   } = props;
   const renderListView = (props) => (
-    <View>
-      {typeof renderHeader === 'function' && renderHeader()}
-      <ListView
-        {...listViewProps}
-        ref={refCallback}
-        style={[defaultStyles.listview, listViewStyle, props.style]}
-        dataSource={dataSource}
-        renderRow={renderRow}
-      />
-    </View>
-  );
+  {typeof renderHeader === 'function' && renderHeader()}
+  <ListView
+    {...listViewProps}
+    ref={refCallback}
+    style={[defaultStyles.listview, listViewStyle, props.style]}
+    dataSource={dataSource}
+    renderRow={renderRow}
+  />
+)
+  ;
   return (
-    <View style={[defaultStyles.verticalContainer, style]}>
+    <View>
       {
         scrollable ?
-          <ScrollView style={scrollableStyle} horizontal>{renderListView()}</ScrollView> :
-          renderListView()
+          <ScrollView style={[defaultStyles.verticalContainer, style]} horizontal>
+            {renderListView()}
+          </ScrollView> :
+          <View style={[defaultStyles.verticalContainer, style]}>
+            {renderListView()}
+          </View>
       }
     </View>
   );
@@ -51,7 +53,6 @@ export function DataTable(props) {
 DataTable.propTypes = {
   style: View.propTypes.style,
   listViewStyle: React.PropTypes.number,
-  scrollableStyle: React.PropTypes.style,
   refCallback: React.PropTypes.func,
   renderHeader: React.PropTypes.func,
   dataSource: React.PropTypes.object.isRequired,
