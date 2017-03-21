@@ -40,7 +40,7 @@ export function DataTable(props) {
     <View style={[defaultStyles.verticalContainer, style]}>
       {
         scrollable ?
-          <ScrollView horizontal>{renderListView({style: {flex: 0}})}</ScrollView> :
+          <ScrollView horizontal>{renderListView()}</ScrollView> :
           renderListView()
       }
     </View>

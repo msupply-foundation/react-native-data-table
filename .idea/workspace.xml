@@ -65,8 +65,8 @@
       <file leaf-file-name="DataTable.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/DataTable.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="245">
-              <caret line="32" column="66" selection-start-line="32" selection-start-column="66" selection-end-line="32" selection-end-column="66" />
+            <state relative-caret-position="410">
+              <caret line="42" column="49" selection-start-line="42" selection-start-column="49" selection-end-line="42" selection-end-column="49" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
                 <element signature="e#85#111#0" expanded="true" />
@@ -214,12 +214,12 @@
       <option name="presentableId" value="Default" />
       <updated>1490104473565</updated>
       <workItem from="1490104477448" duration="743000" />
-      <workItem from="1490110373035" duration="4682000" />
+      <workItem from="1490110373035" duration="5841000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="5425000" />
+    <option name="totallyTimeSpent" value="6584000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
@@ -312,8 +312,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/DataTable.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="245">
-          <caret line="32" column="66" selection-start-line="32" selection-start-column="66" selection-end-line="32" selection-end-column="66" />
+        <state relative-caret-position="410">
+          <caret line="42" column="49" selection-start-line="42" selection-start-column="49" selection-end-line="42" selection-end-column="49" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#85#111#0" expanded="true" />
