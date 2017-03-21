@@ -41,6 +41,7 @@ export function HeaderCell(props) {
     isSelected,
     isAscending,
     arrowStyle,
+    cellWidth,
     ...containerProps,
   } = props;
 
@@ -57,7 +58,7 @@ export function HeaderCell(props) {
     return (
       <TouchableOpacity
         {...containerProps}
-        style={[defaultStyles.headerCell, style, { flex: width }]}
+        style={[defaultStyles.headerCell, style, { flex: width, minWidth: cellWidth || 0}]}
         onPress={onPress}
       >
         <Text style={textStyle}>
@@ -68,7 +69,7 @@ export function HeaderCell(props) {
     );
   }
   return (
-    <View {...containerProps} style={[defaultStyles.headerCell, style, { flex: width }]}>
+    <View {...containerProps} style={[defaultStyles.headerCell, style, { flex: width, minWidth: cellWidth || 0 }]}>
       <Text style={textStyle}>
         {text}
       </Text>
@@ -82,6 +83,7 @@ HeaderCell.propTypes = {
   style: View.propTypes.style,
   textStyle: Text.propTypes.style,
   arrowStyle: Text.propTypes.style,
+  cellWidth: React.PropTypes.number,
   width: React.PropTypes.number,
   onPress: React.PropTypes.func,
   text: React.PropTypes.string,

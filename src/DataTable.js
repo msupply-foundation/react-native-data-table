@@ -1,4 +1,3 @@
-
 /* @flow weak */
 
 /**
@@ -11,6 +10,7 @@ import {
   StyleSheet,
   View,
   ListView,
+  ScrollView,
 } from 'react-native';
 
 export function DataTable(props) {
@@ -21,10 +21,11 @@ export function DataTable(props) {
     dataSource,
     refCallback,
     renderRow,
+    scrollable,
     ...listViewProps,
   } = props;
-  return (
-    <View style={[defaultStyles.verticalContainer, style]}>
+  const renderListView = () => (
+    <View>
       {typeof renderHeader === 'function' && renderHeader()}
       <ListView
         {...listViewProps}
@@ -33,6 +34,15 @@ export function DataTable(props) {
         dataSource={dataSource}
         renderRow={renderRow}
       />
+    </View>
+  );
+  return (
+    <View style={[defaultStyles.verticalContainer, style]}>
+      {
+        scrollable ?
+          <ScrollView horizontal>{renderListView()}</ScrollView> :
+          renderListView()
+      }
     </View>
   );
 }

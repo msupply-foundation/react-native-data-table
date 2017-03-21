@@ -22,12 +22,12 @@ import {
  * @return  {React.Component}       A single View with children
  */
 export function Cell(props) {
-  const { style, numberOfLines, textStyle, width, children, ...viewProps } = props;
+  const { style, numberOfLines, textStyle, width, children, cellWidth, ...viewProps } = props;
 
   // Render string child in a Text Component
   if (typeof children === 'string' || typeof children === 'number') {
     return (
-      <View {...viewProps} style={[defaultStyles.cell, style, { flex: width }]}>
+      <View {...viewProps} style={[defaultStyles.cell, style, { flex: width , minWidth: cellWidth || 0}]}>
         <Text numberOfLines={numberOfLines} style={textStyle}>
           {children}
         </Text>
@@ -36,7 +36,7 @@ export function Cell(props) {
   }
   // Render any non-string child component(s)
   return (
-    <View {...viewProps} style={[defaultStyles.cell, style, { flex: width }]}>
+    <View {...viewProps} style={[defaultStyles.cell, style, { flex: width, minWidth: cellWidth || 0 }]}>
       {children}
     </View>
   );
@@ -47,6 +47,7 @@ Cell.propTypes = {
   style: View.propTypes.style,
   textStyle: Text.propTypes.style,
   width: React.PropTypes.number,
+  cellWidth: React.PropTypes.number,
   children: React.PropTypes.any,
   numberOfLines: React.PropTypes.number,
 };
