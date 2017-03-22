@@ -33,7 +33,6 @@ export function DataTable(props) {
       renderRow={renderRow}
     />
   );
-  //todo: maybe get rid of scrollable stuff, it doesn't seem to work
   return (
     <View>
       {
