@@ -10,8 +10,8 @@ import {
   StyleSheet,
   View,
   ListView,
-  ScrollView,
 } from 'react-native';
+import {ScrollView} from '@shoutem/ui';
 
 export function DataTable(props) {
   const {
@@ -22,25 +22,27 @@ export function DataTable(props) {
     refCallback,
     renderRow,
     scrollable,
-    contentContainerStyle,
     ...listViewProps,
   } = props;
-  const renderListView = (props) => (
-      <ListView
-        {...listViewProps}
-        ref={refCallback}
-        style={[defaultStyles.listview, listViewStyle, props.style]}
-        dataSource={dataSource}
-        renderRow={renderRow}
-      />
+  const renderListView = () => (
+    <ListView
+      {...listViewProps}
+      ref={refCallback}
+      style={[defaultStyles.listview, listViewStyle]}
+      dataSource={dataSource}
+      renderRow={renderRow}
+    />
   );
+  //todo: maybe get rid of scrollable stuff, it doesn't seem to work
   return (
     <View>
       {
         scrollable ?
-          <ScrollView contentContainerStyle={contentContainerStyle} style={[defaultStyles.verticalContainer, style]} horizontal>
-            {typeof renderHeader === 'function' && renderHeader()}
-            {renderListView()}
+          <ScrollView horizontal>
+            <View style={[defaultStyles.verticalContainer, style]}>
+              {typeof renderHeader === 'function' && renderHeader()}
+              {renderListView()}
+            </View>
           </ScrollView> :
           <View style={[defaultStyles.verticalContainer, style]}>
             {typeof renderHeader === 'function' && renderHeader()}
@@ -53,6 +55,8 @@ export function DataTable(props) {
 
 DataTable.propTypes = {
   style: View.propTypes.style,
+  contentContainerStyle: View.propTypes.style,
+  innerWrapperStyle: View.propTypes.style,
   listViewStyle: React.PropTypes.number,
   refCallback: React.PropTypes.func,
   renderHeader: React.PropTypes.func,
