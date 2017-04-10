@@ -54,13 +54,12 @@ export function DataTable(props) {
 
 DataTable.propTypes = {
   style: View.propTypes.style,
-  contentContainerStyle: View.propTypes.style,
-  innerWrapperStyle: View.propTypes.style,
   listViewStyle: React.PropTypes.number,
   refCallback: React.PropTypes.func,
   renderHeader: React.PropTypes.func,
   dataSource: React.PropTypes.object.isRequired,
   renderRow: React.PropTypes.func.isRequired,
+  scrollable: React.PropTypes.bool,
 };
 DataTable.defaultProps = {
   showsVerticalScrollIndicator: true,
