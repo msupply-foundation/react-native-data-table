@@ -11,7 +11,7 @@ import {
   View,
   ListView,
 } from 'react-native';
-import {ScrollView} from '@shoutem/ui';
+import { ScrollView } from '@shoutem/ui';
 
 export function DataTable(props) {
   const {
@@ -22,10 +22,13 @@ export function DataTable(props) {
     refCallback,
     renderRow,
     scrollable,
+    listViewComponent,
+    userRealm,
     ...listViewProps,
   } = props;
+
   const renderListView = () => (
-    <ListView
+    <listViewComponent
       {...listViewProps}
       ref={refCallback}
       style={[defaultStyles.listview, listViewStyle]}
@@ -60,9 +63,11 @@ DataTable.propTypes = {
   dataSource: React.PropTypes.object.isRequired,
   renderRow: React.PropTypes.func.isRequired,
   scrollable: React.PropTypes.bool,
+  listViewComponent: React.PropTypes.element,
 };
 DataTable.defaultProps = {
   showsVerticalScrollIndicator: true,
+  listViewComponent: ListView,
   scrollRenderAheadDistance: 5000,
 };
 
