@@ -22,13 +22,13 @@ export function DataTable(props) {
     refCallback,
     renderRow,
     scrollable,
-    listViewComponent,
+    ListViewComponent,
     userRealm,
     ...listViewProps,
   } = props;
 
   const renderListView = () => (
-    <listViewComponent
+    <ListViewComponent
       {...listViewProps}
       ref={refCallback}
       style={[defaultStyles.listview, listViewStyle]}
@@ -63,11 +63,11 @@ DataTable.propTypes = {
   dataSource: React.PropTypes.object.isRequired,
   renderRow: React.PropTypes.func.isRequired,
   scrollable: React.PropTypes.bool,
-  listViewComponent: React.PropTypes.func,
+  ListViewComponent: React.PropTypes.func,
 };
 DataTable.defaultProps = {
   showsVerticalScrollIndicator: true,
-  listViewComponent: ListView,
+  ListViewComponent: ListView,
   scrollRenderAheadDistance: 5000,
 };
 
