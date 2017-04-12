@@ -2,13 +2,13 @@
   "extends": "airbnb",
   "parser": "babel-eslint",
   "rules": {
-    "no-param-reassign": "off",
-    "jsx-boolean-value": "off",
-    "no-use-before-define": "off",
-    "object-shorthand": "off",
+    "no-param-reassign": 0,
+    "jsx-boolean-value": 0,
+    "no-use-before-define": 0,
+    "object-shorthand": 0,
     "strict": 0,
     "no-confusing-arrow": ["error", {"allowParens": true}],
-    "global-require": "off",
-    "react/jsx-boolean-value": "off",
+    "global-require": 0,
+    "react/jsx-boolean-value": 0,
   }
 }

@@ -19,6 +19,8 @@ This component acts as a wrapper around the React Native ListView component. All
 | renderRow          | func (required)   | See [RenderRow](https://facebook.github.io/react-native/docs/listview.html#renderrow). Function can return anything, but the Cell components in this library are to make it easy for constructing a table  |
 | renderHeader       | func    | Provide this function with appropriate return to make a table header      |
 | refCallback        | func    | CallBack for utilising reference of the inner TextInput                   |
+| scrollable         | bool    | Allow horizontal scrolling (for tables wider than container width)        |
+| ListViewComponent  | func    | User a custom ListView component. Pass the class function (e.g. `ListView`)|
 
 ### Cell
 Renders a Cell that supports having a string as children, or any component.
@@ -70,7 +72,8 @@ This could also be thought of as "column headers", as that is what this componen
 | Prop Name          | Type    | Description                                                               |
 | ------------------ | ------- | ------------------------------------------------------------------------- |
 | TouchableOpacity Props | -   | Will pass through any extra props to TouchableOpacity                     |
-| textStyle          | style   | Will override styling of the Text label within the HeaderCell                 |
+| textStyle          | style   | Will override styling of the Text label within the HeaderCell             |
+| arrowStyle         | style   | Will override styling of the arrows within the HeaderCell                 |
 | style              | style   | Will override styling of the TouchableHighlight enclosing the button      |
 | width              | number  | Gives width relative to other cells in the same container (via flexbox)   |
 | onPress            | func    | CallBack Function for handling user pressing headerCell. Should change some parent state that affects the following 2 props                    |

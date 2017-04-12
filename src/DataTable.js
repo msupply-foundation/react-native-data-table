@@ -1,4 +1,3 @@
-
 /* @flow weak */
 
 /**
@@ -10,9 +9,9 @@ import React from 'react';
 import {
   StyleSheet,
   View,
+  ListView,
 } from 'react-native';
-
-import { ListView } from 'realm/react-native';
+import { ScrollView } from '@shoutem/ui';
 
 export function DataTable(props) {
   const {
@@ -22,18 +21,36 @@ export function DataTable(props) {
     dataSource,
     refCallback,
     renderRow,
+    scrollable,
+    ListViewComponent,
+    userRealm,
     ...listViewProps,
   } = props;
+
+  const renderListView = () => (
+    <ListViewComponent
+      {...listViewProps}
+      ref={refCallback}
+      style={[defaultStyles.listview, listViewStyle]}
+      dataSource={dataSource}
+      renderRow={renderRow}
+    />
+  );
   return (
-    <View style={[defaultStyles.verticalContainer, style]}>
-      {typeof renderHeader === 'function' && renderHeader()}
-      <ListView
-        {...listViewProps}
-        ref={refCallback}
-        style={[defaultStyles.listview, listViewStyle]}
-        dataSource={dataSource}
-        renderRow={renderRow}
-      />
+    <View>
+      {
+        scrollable ?
+          <ScrollView horizontal>
+            <View style={[defaultStyles.verticalContainer, style]}>
+              {typeof renderHeader === 'function' && renderHeader()}
+              {renderListView()}
+            </View>
+          </ScrollView> :
+          <View style={[defaultStyles.verticalContainer, style]}>
+            {typeof renderHeader === 'function' && renderHeader()}
+            {renderListView()}
+          </View>
+      }
     </View>
   );
 }
@@ -45,9 +62,12 @@ DataTable.propTypes = {
   renderHeader: React.PropTypes.func,
   dataSource: React.PropTypes.object.isRequired,
   renderRow: React.PropTypes.func.isRequired,
+  scrollable: React.PropTypes.bool,
+  ListViewComponent: React.PropTypes.func,
 };
 DataTable.defaultProps = {
   showsVerticalScrollIndicator: true,
+  ListViewComponent: ListView,
   scrollRenderAheadDistance: 5000,
 };
 
