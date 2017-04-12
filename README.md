@@ -20,7 +20,7 @@ This component acts as a wrapper around the React Native ListView component. All
 | renderHeader       | func    | Provide this function with appropriate return to make a table header      |
 | refCallback        | func    | CallBack for utilising reference of the inner TextInput                   |
 | scrollable         | bool    | Allow horizontal scrolling (for tables wider than container width)        |
-| listViewComponent  | element | User a custom ListView component. Pass the class/function (e.g. `ListView`)|
+| listViewComponent  | func    | User a custom ListView component. Pass the class function (e.g. `ListView`)|
 
 ### Cell
 Renders a Cell that supports having a string as children, or any component.

@@ -63,7 +63,7 @@ DataTable.propTypes = {
   dataSource: React.PropTypes.object.isRequired,
   renderRow: React.PropTypes.func.isRequired,
   scrollable: React.PropTypes.bool,
-  listViewComponent: React.PropTypes.element,
+  listViewComponent: React.PropTypes.func,
 };
 DataTable.defaultProps = {
   showsVerticalScrollIndicator: true,
