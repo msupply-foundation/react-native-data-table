@@ -7,6 +7,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   View,
@@ -40,11 +41,11 @@ export function DataTable(props) {
 
 DataTable.propTypes = {
   style: View.propTypes.style,
-  listViewStyle: React.PropTypes.number,
-  refCallback: React.PropTypes.func,
-  renderHeader: React.PropTypes.func,
-  dataSource: React.PropTypes.object.isRequired,
-  renderRow: React.PropTypes.func.isRequired,
+  listViewStyle: PropTypes.number,
+  refCallback: PropTypes.func,
+  renderHeader: PropTypes.func,
+  dataSource: PropTypes.object.isRequired,
+  renderRow: PropTypes.func.isRequired,
 };
 DataTable.defaultProps = {
   showsVerticalScrollIndicator: true,

@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   Text,
@@ -76,13 +77,13 @@ export function HeaderCell(props) {
 }
 
 HeaderCell.propTypes = {
-  isSelected: React.PropTypes.bool,
-  isAscending: React.PropTypes.bool,
+  isSelected: PropTypes.bool,
+  isAscending: PropTypes.bool,
   style: View.propTypes.style,
   textStyle: Text.propTypes.style,
-  width: React.PropTypes.number,
-  onPress: React.PropTypes.func,
-  text: React.PropTypes.string,
+  width: PropTypes.number,
+  onPress: PropTypes.func,
+  text: PropTypes.string,
 };
 
 HeaderCell.defaultProps = {

@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
   TouchableOpacity,
@@ -81,13 +82,13 @@ export class CheckableCell extends React.Component {
 
 CheckableCell.propTypes = {
   style: View.propTypes.style,
-  width: React.PropTypes.number,
-  onPress: React.PropTypes.func,
-  renderDisabled: React.PropTypes.func,
-  renderIsChecked: React.PropTypes.func,
-  renderIsNotChecked: React.PropTypes.func,
-  isChecked: React.PropTypes.bool,
-  isDisabled: React.PropTypes.bool,
+  width: PropTypes.number,
+  onPress: PropTypes.func,
+  renderDisabled: PropTypes.func,
+  renderIsChecked: PropTypes.func,
+  renderIsNotChecked: PropTypes.func,
+  isChecked: PropTypes.bool,
+  isDisabled: PropTypes.bool,
 };
 
 CheckableCell.defaultProps = {

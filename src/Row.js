@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
   StyleSheet,
@@ -69,10 +70,10 @@ export class Row extends React.Component {
 
 Row.propTypes = {
   style: View.propTypes.style,
-  children: React.PropTypes.any,
-  onPress: React.PropTypes.func,
-  isExpanded: React.PropTypes.bool,
-  renderExpansion: React.PropTypes.func,
+  children: PropTypes.any,
+  onPress: PropTypes.func,
+  isExpanded: PropTypes.bool,
+  renderExpansion: PropTypes.func,
 };
 
 const defaultStyles = StyleSheet.create({

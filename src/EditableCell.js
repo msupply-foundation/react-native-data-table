@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   TextInput,
@@ -61,14 +62,14 @@ export class EditableCell extends React.Component {
 
 EditableCell.propTypes = {
   style: View.propTypes.style,
-  refCallback: React.PropTypes.func,
+  refCallback: PropTypes.func,
   textStyle: TextInput.propTypes.style,
-  width: React.PropTypes.number,
-  onEndEditing: React.PropTypes.func,
-  target: React.PropTypes.object,
-  value: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.number,
+  width: PropTypes.number,
+  onEndEditing: PropTypes.func,
+  target: PropTypes.object,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
   ]),
 };
 

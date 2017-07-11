@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   View,
@@ -22,7 +23,7 @@ export function Header(props) {
 
 Header.propTypes = {
   style: View.propTypes.style,
-  children: React.PropTypes.any,
+  children: PropTypes.any,
 };
 
 const defaultStyles = StyleSheet.create({

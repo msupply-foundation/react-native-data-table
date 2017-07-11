@@ -7,6 +7,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -28,8 +29,8 @@ export function TableButton(props) {
 
 TableButton.propTypes = {
   style: View.propTypes.style,
-  onPress: React.PropTypes.func,
-  children: React.PropTypes.any,
+  onPress: PropTypes.func,
+  children: PropTypes.any,
 };
 
 const defaultStyles = StyleSheet.create({

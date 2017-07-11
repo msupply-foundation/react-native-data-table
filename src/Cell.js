@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   Text,
@@ -46,9 +47,9 @@ Cell.propTypes = {
   ...View.propTypes,
   style: View.propTypes.style,
   textStyle: Text.propTypes.style,
-  width: React.PropTypes.number,
-  children: React.PropTypes.any,
-  numberOfLines: React.PropTypes.number,
+  width: PropTypes.number,
+  children: PropTypes.any,
+  numberOfLines: PropTypes.number,
 };
 
 Cell.defaultProps = {
