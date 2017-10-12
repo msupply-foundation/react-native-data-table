@@ -11,9 +11,9 @@ import PropTypes from 'prop-types';
 import {
   StyleSheet,
   View,
+  ListView
 } from 'react-native';
 
-import { ListView } from 'realm/react-native';
 
 export class DataTable extends React.Component {
   constructor(props) {
