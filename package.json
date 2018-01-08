@@ -54,7 +54,7 @@
   "peerDependencies": {
     "prop-types": "*",
     "react": "*",
-    "react-native": "*",
+    "react-native": ">= 44.0.0",
     "realm": "*"
   }
 }

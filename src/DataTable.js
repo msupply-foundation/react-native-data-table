@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import {
   StyleSheet,
   View,
+  ViewPropTypes,
 } from 'react-native';
 
 import { ListView } from 'realm/react-native';
@@ -52,7 +53,7 @@ export class DataTable extends React.Component {
 }
 
 DataTable.propTypes = {
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   listViewStyle: PropTypes.number,
   refCallback: PropTypes.func,
   renderHeader: PropTypes.func,

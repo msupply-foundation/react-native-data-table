@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import {
   StyleSheet,
   View,
+  ViewPropTypes,
 } from 'react-native';
 
 export function Header(props) {
@@ -22,7 +23,7 @@ export function Header(props) {
 }
 
 Header.propTypes = {
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   children: PropTypes.any,
 };
 
