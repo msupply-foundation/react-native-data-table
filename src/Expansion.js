@@ -7,7 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, ViewPropTypes } from 'react-native';
 
 export function Expansion(props) {
   const { children, style, ...viewProps } = props;
@@ -19,6 +19,6 @@ export function Expansion(props) {
 }
 
 Expansion.propTypes = {
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   children: PropTypes.any,
 };

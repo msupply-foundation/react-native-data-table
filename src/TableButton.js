@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import {
   StyleSheet,
   TouchableOpacity,
-  View,
+  ViewPropTypes,
 } from 'react-native';
 
 export function TableButton(props) {
@@ -28,7 +28,7 @@ export function TableButton(props) {
 }
 
 TableButton.propTypes = {
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   onPress: PropTypes.func,
   children: PropTypes.any,
 };

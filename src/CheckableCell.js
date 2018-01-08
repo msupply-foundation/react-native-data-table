@@ -9,6 +9,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
+  ViewPropTypes,
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from 'react-native';
@@ -81,7 +82,7 @@ export class CheckableCell extends React.Component {
 }
 
 CheckableCell.propTypes = {
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   width: PropTypes.number,
   onPress: PropTypes.func,
   renderDisabled: PropTypes.func,

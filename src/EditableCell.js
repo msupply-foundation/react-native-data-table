@@ -11,6 +11,7 @@ import {
   StyleSheet,
   TextInput,
   View,
+  ViewPropTypes,
 } from 'react-native';
 
 export class EditableCell extends React.Component {
@@ -61,7 +62,7 @@ export class EditableCell extends React.Component {
 }
 
 EditableCell.propTypes = {
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   refCallback: PropTypes.func,
   textStyle: TextInput.propTypes.style,
   width: PropTypes.number,

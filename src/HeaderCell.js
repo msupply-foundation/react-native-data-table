@@ -11,6 +11,7 @@ import {
   StyleSheet,
   Text,
   View,
+  ViewPropTypes,
   TouchableOpacity,
 } from 'react-native';
 
@@ -79,7 +80,7 @@ export function HeaderCell(props) {
 HeaderCell.propTypes = {
   isSelected: PropTypes.bool,
   isAscending: PropTypes.bool,
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   textStyle: Text.propTypes.style,
   width: PropTypes.number,
   onPress: PropTypes.func,
