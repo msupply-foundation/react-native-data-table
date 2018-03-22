@@ -1,5 +1,5 @@
 # react-native-data-table
-A React Native data table written purely in JSX with React.
+A React Native data table written purely in JSX with React and RealmJS DB (until refactor).
 ## Installation
 `npm install --save react-native-data-table`
 ## Usage
