@@ -52,7 +52,7 @@ Renders a cell with an editable text input. Has own state for managing TextInput
 
 | Prop Name          | Type    | Description                                                               |
 | ------------------ | ------- | ------------------------------------------------------------------------- |
-| TextInput Props    | -       | Will pass through any extra props to TextInput                            |
+| textInputProps     | -       | Will pass through any extra props to TextInput                            |
 | textStyle          | style   | Will override styling of the TextInput within the button                 |
 | style              | style   | Style of the EditableCell (View props)                                   |
 | width              | number  | Gives width relative to other cells in the same container (via flexbox)   |
