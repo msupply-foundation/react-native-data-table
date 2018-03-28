@@ -39,8 +39,8 @@ export class EditableCell extends React.Component {
     }
   }
 
-  onEditing(text) {
-    this.setState({ value: text }, () => {
+  onEditing(value) {
+    this.setState({ value }, () => {
       if (!this.props.onEditing) return;
       // fire on editing event
       this.props.onEditing(this.props.target, this.state.value);
