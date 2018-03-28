@@ -21,6 +21,7 @@ export class EditableCell extends React.Component {
       value: 'N/A',
     };
     this.componentWillMount = this.componentWillMount.bind(this);
+    this.onEditing = this.onEditing.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
   }
 
@@ -38,7 +39,16 @@ export class EditableCell extends React.Component {
     }
   }
 
+  onEditing(text) {
+    this.setState({ value: text }, () => {
+      if (!this.props.onEditing) return;
+      // fire on editing event
+      this.props.onEditing(this.props.target, this.state.value);
+    });
+  }
+
   onEndEditing() {
+    if (!this.props.onEndEditing) return;
     // If the field is cleared, write null to property
     const newValue = this.state.value === '' ? null : this.state.value;
     this.props.onEndEditing(this.props.target, newValue);
@@ -52,7 +62,7 @@ export class EditableCell extends React.Component {
           {...textInputProps}
           ref={refCallback}
           style={[defaultStyles.text, textStyle]}
-          onChangeText={(text) => this.setState({ value: text })}
+          onChangeText={this.onEditing}
           onEndEditing={this.onEndEditing}
           value={this.state.value}
         />
@@ -66,6 +76,7 @@ EditableCell.propTypes = {
   refCallback: PropTypes.func,
   textStyle: TextInput.propTypes.style,
   width: PropTypes.number,
+  onEditing: PropTypes.func,
   onEndEditing: PropTypes.func,
   target: PropTypes.object,
   value: PropTypes.oneOfType([
