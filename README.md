@@ -8,7 +8,7 @@ react-native-data-table provides a number of components for constructing a table
 ![data table example](https://cloud.githubusercontent.com/assets/7684221/22765506/8e24ca76-eed5-11e6-97fe-5b0da7687aca.png)
 
 ### DataTable
-This component acts as a wrapper around the React Native ListView component. All the other components in this library should be used in the renderRow and renderRow and renderHeader.
+This component acts as a wrapper around the React Native ListView component. All the other components in this library should be used in the renderRow and renderHeader.
 
 | Prop Name          | Type    | Description                                                               |
 | ------------------ | ------- | ------------------------------------------------------------------------- |
