@@ -11,12 +11,14 @@ import {
   StyleSheet,
   View,
   ViewPropTypes,
+  Platform,
 } from 'react-native';
 
 export function Header(props) {
   const { children, style, ...viewProps } = props;
+  const webProps = Platform.OS === 'web' ? { "aria-header": true } : null;
   return (
-    <View {...viewProps} style={[defaultStyles.header, style]}>
+    <View {...viewProps} {...webProps} style={[defaultStyles.header, style]}>
       {children}
     </View>
   );

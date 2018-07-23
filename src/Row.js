@@ -12,6 +12,7 @@ import {
   ViewPropTypes,
   StyleSheet,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 
 export class Row extends React.Component {
@@ -37,6 +38,8 @@ export class Row extends React.Component {
   render() {
     const { style, expandedRowStyle, children, renderExpansion, onPress, ...touchableOpacityProps } = this.props;
     const rowStyle = this.state.isExpanded && expandedRowStyle ? expandedRowStyle : style;
+    const webProps = Platform.OS === 'web' ? { "aria-row": true } : null;
+
     if (renderExpansion) {
       return (
         <TouchableOpacity
@@ -44,7 +47,7 @@ export class Row extends React.Component {
           style={[defaultStyles.row, rowStyle]}
           onPress={this.onPress}
         >
-          <View style={defaultStyles.cellContainer}>
+          <View {...webProps} style={defaultStyles.cellContainer}>
             {children}
           </View>
           {this.state.isExpanded && renderExpansion()}
@@ -63,7 +66,7 @@ export class Row extends React.Component {
       );
     }
     return (
-      <View style={[defaultStyles.row, { flexDirection: 'row' }, rowStyle]}>
+      <View {...webProps} style={[defaultStyles.row, { flexDirection: 'row' }, rowStyle]}>
         {children}
       </View>
     );

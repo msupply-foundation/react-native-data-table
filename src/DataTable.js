@@ -38,7 +38,7 @@ export class DataTable extends React.Component {
     } = this.props;
 
     return (
-      <View style={[defaultStyles.verticalContainer, style]}>
+      <View accessibilityRole="table" style={[defaultStyles.verticalContainer, style]}>
         {typeof renderHeader === 'function' && renderHeader()}
         <ListView
           {...listViewProps}
