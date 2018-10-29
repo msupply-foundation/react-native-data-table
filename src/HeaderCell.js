@@ -42,7 +42,7 @@ export function HeaderCell(props) {
     text,
     isSelected,
     isAscending,
-    ...containerProps,
+    ...containerProps
   } = props;
 
   function renderSortArrow() {
