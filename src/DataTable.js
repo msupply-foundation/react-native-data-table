@@ -34,7 +34,7 @@ export class DataTable extends React.Component {
       dataSource,
       refCallback,
       renderRow,
-      ...listViewProps,
+      ...listViewProps
     } = this.props;
 
     return (
