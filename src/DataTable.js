@@ -54,7 +54,7 @@ export class DataTable extends React.Component {
 
 DataTable.propTypes = {
   style: ViewPropTypes.style,
-  listViewStyle: PropTypes.number,
+  listViewStyle: PropTypes.object,
   refCallback: PropTypes.func,
   renderHeader: PropTypes.func,
   dataSource: PropTypes.object.isRequired,
