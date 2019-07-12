@@ -40,10 +40,13 @@ for (let index = 0; index < rowCount; index++) {
  * Below is the stuff. I think we'll probably need to use table context to tidy
  * up keyExtractor and dataReducer. Then we're basically using redux LOL.
  *
+ * TODO:
+ * - Editing a cell hammers row rerender, but only the cell in the one row edited is rerendered
+ *
  * If and only if the table is bigger than the viewport (say 500 rows):
  * - scrolling hammers row rerender
- * - sorting hammers row rerender
- * - Might be premature optimising the above?
+ * - sorting hammers row rerender (quite shit with 1000 rows)
+ * - Might be premature optimising the above? ShadowDOM may be forgiving here
  *
  * More than ~40 TextInputs in table (i.e. Editable column) causes crashes https://github.com/facebook/react-native/issues/17530#issuecomment-416367184
  *
