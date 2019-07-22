@@ -17,13 +17,13 @@ import {
   StatusBar,
 } from 'react-native'
 
-const rowCount = 40
+const rowCount = 5000
 const columnCount = 4
 const baseData = []
 const baseColumns = []
 
 for (let index = 0; index < columnCount; index++) {
-  baseColumns.push({ key: `col${index}`, editable: index === columnCount - 1 }) // index === columnCount - 1
+  baseColumns.push({ key: `col${index}`, editable: false }) // index === columnCount - 1
 }
 
 for (let index = 0; index < rowCount; index++) {
@@ -40,18 +40,30 @@ for (let index = 0; index < rowCount; index++) {
  * Below is the stuff. I think we'll probably need to use table context to tidy
  * up keyExtractor and dataReducer. Then we're basically using redux LOL.
  *
- * TODO:
- * - Editing a cell hammers row rerender, but only the cell in the one row edited is rerendered
+ * # TODO:
+ * - Context for reducer to tidy up?
+ * - Styling/theme context (rather than passing through style props)?
+ * - Different Cell types as individual components? Pros/cons? (e.g. EditableCell, TableButton...)
+ * - So, every different cell type needs an reducer action?
+ * - Custom Cells?
+ * - Horizontal scrolling support!
+ * - Anything to do with extraData prop...? (calculated fields? Row states/highlighting!?)
+ * - Is the dataDispatch prop easily given a redux dispatch? That'd be really nice.
+ * - HeaderRow/Cells. ListHeaderComponent?
+ * - ListFooterComponent?
+ * - Start taking performance metrics
+ * - Optimising the table via default props for VirtualisedList (e.g. getItemLayout, maxToRenderPerBatch, updateCellsBatchingPeriod, removeClippedSubviews...)
+ * - Unit testing table to ensure no regressions on what triggers rerenders
  *
+ * # Notes
  * If and only if the table is bigger than the viewport (say 500 rows):
- * - scrolling hammers row rerender
- * - sorting hammers row rerender (quite shit with 1000 rows)
- * - Might be premature optimising the above? ShadowDOM may be forgiving here
+ * - sorting can hammer row rerender (quite shit with 5000 rows): Simply has to if data range is totally out of currently rendered viewport
  *
  * More than ~40 TextInputs in table (i.e. Editable column) causes crashes https://github.com/facebook/react-native/issues/17530#issuecomment-416367184
  *
- * =============================================================================
- * =============================================================================
+ * There have been requests for better support of reactXP and react-native-web (e.g. aria accessibility).
+ * I think that depending on what VirtualisedList is ported to, this may be a gross misuse
+ * of this package. Should implement native HTML for web based IMO.
  * =============================================================================
  */
 
@@ -60,7 +72,7 @@ const Cell = React.memo(
     const _onEdit = newValue =>
       dataDispatch({ type: 'editRowCell', newValue, rowKey, columnKey })
 
-    console.log(value)
+    console.log(`cell: ${value}`)
     return (
       <View style={styles.cell}>
         {editable ? (
@@ -73,19 +85,18 @@ const Cell = React.memo(
   }
 )
 
-const Row = React.memo(({ listItem, columns, dataDispatch, keyExtractor }) => {
-  const { item } = listItem
-  const rowKey = keyExtractor(item)
+const Row = React.memo(({ rowData, rowKey, columns, dataDispatch }) => {
   // TODO: Editing still rerenders every row. Not sure if we can defeat that.
   console.log('====================================')
   console.log(`Row: ${rowKey}`)
   console.log('====================================')
+
   return (
     <View style={styles.row}>
       {columns.map(col => (
         <Cell
           key={col.key}
-          value={listItem.item[col.key]}
+          value={rowData[col.key]}
           rowKey={rowKey}
           columnKey={col.key}
           editable={col.editable}
@@ -97,42 +108,49 @@ const Row = React.memo(({ listItem, columns, dataDispatch, keyExtractor }) => {
 })
 
 const DataTable = React.memo(
-  ({ data, keyExtractor, dataDispatch, ...otherProps }) => {
-    const _renderItem = listItem => {
+  ({ data, keyExtractor, dataDispatch, columns, ...otherProps }) => {
+    const _renderItem = ({ item, index }) => {
+      const rowKey = keyExtractor(item)
       return (
         <Row
-          listItem={listItem}
-          columns={baseColumns}
+          rowData={data[index]}
+          columns={columns}
+          rowKey={rowKey}
           dataDispatch={dataDispatch}
-          keyExtractor={keyExtractor}
         />
       )
     }
 
+    console.log('Table: render')
     return (
       <VirtualizedList
         data={data}
         keyExtractor={keyExtractor}
         renderItem={_renderItem}
-        getItemCount={items => items.length} // TODO: Should be prop
-        getItem={(items, index) => items[index]} // TODO: Should be prop
         {...otherProps}
       />
     )
   }
 )
 
-// TODO: This is janky being out here, needs to go in the api
-const keyExtractor = item => item.id
-// TODO: This should also be in api somehow
+const getItem = (items, index) => items[index] // TODO: Should be default prop
+const getItemCount = items => items.length // TODO: Should be default prop
+const keyExtractor = item => item.id // TODO: Should be default prop
 const dataReducer = (data, action) => {
   switch (action.type) {
     case 'editRowCell':
       const { newValue, rowKey, columnKey } = action
-      const newData = [...data]
-      const rowIndex = newData.findIndex(row => keyExtractor(row) === rowKey)
-      newData[rowIndex][columnKey] = newValue
-      return newData
+      const rowIndex = data.findIndex(row => keyExtractor(row) === rowKey)
+
+      // Immutable array editing
+      return data.map((row, index) => {
+        if (index !== rowIndex) {
+          return row
+        }
+        const rowEdited = { ...row }
+        rowEdited[columnKey] = newValue
+        return rowEdited
+      })
     case 'reverseData':
       return [...data.reverse()]
     default:
@@ -141,10 +159,8 @@ const dataReducer = (data, action) => {
 }
 
 const App = () => {
-  const [data, dataDispatch] = useReducer(dataReducer, baseData)
-  // TODO: extraData to use its own `useReducer`?
   const [isButtonOof, toggleButton] = useState(false)
-
+  const [data, dataDispatch] = useReducer(dataReducer, baseData) // TODO: add to a context?
   return (
     <Fragment>
       <StatusBar hidden />
@@ -158,9 +174,11 @@ const App = () => {
       />
       <DataTable
         data={data}
-        keyExtractor={keyExtractor}
+        columns={baseColumns}
         dataDispatch={dataDispatch}
-        removeClippedSubviews
+        keyExtractor={keyExtractor}
+        getItemCount={getItemCount}
+        getItem={getItem}
       />
     </Fragment>
   )
