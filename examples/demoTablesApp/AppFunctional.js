@@ -46,10 +46,11 @@ for (let index = 0; index < rowCount; index++) {
  * - Different Cell types as individual components? Pros/cons? (e.g. EditableCell, TableButton...)
  * - So, every different cell type needs an reducer action?
  * - Custom Cells?
+ * - How to drill down a row (UX guy pls HALP!!!)
  * - Horizontal scrolling support!
  * - Anything to do with extraData prop...? (calculated fields? Row states/highlighting!?)
  * - Is the dataDispatch prop easily given a redux dispatch? That'd be really nice.
- * - HeaderRow/Cells. ListHeaderComponent?
+ * - HeaderRow/Cells. ListHeaderComponent? Sort icons/render props? Adjustable widths?
  * - ListFooterComponent?
  * - Start taking performance metrics
  * - Optimising the table via default props for VirtualisedList (e.g. getItemLayout, maxToRenderPerBatch, updateCellsBatchingPeriod, removeClippedSubviews...)
