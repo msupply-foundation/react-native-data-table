@@ -86,7 +86,6 @@ const Cell = React.memo(
 )
 
 const Row = React.memo(({ rowData, rowKey, columns, dataDispatch }) => {
-  // TODO: Editing still rerenders every row. Not sure if we can defeat that.
   console.log('====================================')
   console.log(`Row: ${rowKey}`)
   console.log('====================================')
