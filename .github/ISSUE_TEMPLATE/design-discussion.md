@@ -17,14 +17,5 @@ assignees: ''
 ## Design discussion
 <!-- Summarise the solution. Add child issues with checkboxes if created. Delete sub sections if not applicable -->
 
-### Page/navigation Changes
-<!-- Summarise Page/navigation changes.  -->
-
-### Schema Changes
-<!-- Summarise any realm schema changes required if any -->
-
-### Sync Changes
-<!-- Touch on any sync changes that may be required -->
-
 ### Architecture
 <!-- If any, describe design pattern decisions  -->
