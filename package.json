@@ -1,60 +1,38 @@
 {
   "name": "react-native-data-table",
-  "version": "0.2.1",
-  "description": "A generic table to lay out data from realm for react native",
+  "version": "0.3.0",
+  "description": "Data table component and helpers for react-native based on VirtualizedList",
   "repository": "https://github.com/sussol/react-native-data-table.git",
   "author": "Sustainable Solutions (NZ) Ltd.",
   "license": "MIT",
-  "main": "index.js",
   "scripts": {
-    "test": "jest --coverage"
-  },
-  "jest": {
-    "preprocessorIgnorePatterns": [
-      "node_modules/enzyme"
-    ],
-    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
-    "setupEnvScriptFile": "node_modules/react-native/jestSupport/env.js",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "packager/react-packager/src/Activity/"
-    ],
-    "globals": {
-      "__DEV__": true
-    },
-    "unmockedModulePathPatterns": [
-      "react",
-      "react-dom",
-      "react-addons-test-utils",
-      "react-native-mock",
-      "enzyme"
-    ]
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
   },
   "dependencies": {
-    "react-native-vector-icons": "^4.4.2"
+    "react": "16.8.6",
+    "react-native": "0.60.0"
   },
   "devDependencies": {
-    "babel-core": "^6.17.0",
-    "babel-eslint": "^6.1.2",
-    "babel-jest": "^13.2.2",
-    "babel-polyfill": "^6.9.1",
-    "babel-preset-react-native": "^1.9.0",
-    "enzyme": "^2.4.1",
-    "eslint": "^2.9.0",
-    "eslint-config-airbnb": "^9.0.1",
-    "eslint-plugin-import": "^1.7.0",
-    "eslint-plugin-jsx-a11y": "^1.5.5",
-    "eslint-plugin-react": "^5.2.2",
-    "jest": "^16.0.1",
-    "jest-cli": "^16.0.1",
-    "react-addons-test-utils": "~15.3.1",
-    "react-native-mock": "0.2.4",
-    "sinon": "^1.17.3"
+    "@babel/core": "^7.5.0",
+    "@babel/runtime": "^7.5.1",
+    "@react-native-community/eslint-config": "^0.0.5",
+    "babel-jest": "^24.8.0",
+    "eslint": "5.16.0",
+    "eslint-plugin-jest": "^22.13.6",
+    "eslint-plugin-prettier": "^3.1.0",
+    "jest": "^24.8.0",
+    "metro-react-native-babel-preset": "^0.55.0",
+    "prettier": "^1.18.2",
+    "react-test-renderer": "16.8.6"
+  },
+  "jest": {
+    "preset": "react-native"
   },
   "peerDependencies": {
     "prop-types": "*",
     "react": "*",
-    "react-native": ">= 0.44.0",
-    "realm": "*"
+    "react-native": ">= 0.60.0"
   }
 }
