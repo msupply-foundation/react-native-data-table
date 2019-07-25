@@ -61,7 +61,7 @@ const dataReducer = (data, action) => {
 
 const App = () => {
   const [isButtonOof, toggleButton] = useState(false)
-  const [data, dataDispatch] = useReducer(dataReducer, baseData) // TODO: add to a context?
+  const [data, dataDispatch] = useReducer(dataReducer, baseData)
   const columns = baseColumns
 
   const renderCells = useCallback(

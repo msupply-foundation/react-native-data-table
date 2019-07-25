@@ -25,13 +25,10 @@ Cell.propTypes = {
   style: ViewPropTypes.style,
   textStyle: Text.propTypes.style,
   width: PropTypes.number,
-  children: PropTypes.any,
-  numberOfLines: PropTypes.number,
 }
 
 Cell.defaultProps = {
   width: 1,
-  numberOfLines: 1,
 }
 
 const defaultStyles = StyleSheet.create({

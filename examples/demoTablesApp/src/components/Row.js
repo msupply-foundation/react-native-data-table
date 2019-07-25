@@ -14,10 +14,7 @@ export const Row = React.memo(
 
 Row.propTypes = {
   style: ViewPropTypes.style,
-  children: PropTypes.any,
   onPress: PropTypes.func,
-  isExpanded: PropTypes.bool,
-  renderExpansion: PropTypes.func,
 }
 
 const defaultStyles = StyleSheet.create({

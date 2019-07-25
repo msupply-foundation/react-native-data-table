@@ -23,8 +23,6 @@ export const DataTable = React.memo(({ renderRow, ...otherProps }) => (
 
 DataTable.propTypes = {
   ...VirtualizedListPropTypes,
-  listViewStyle: PropTypes.object,
-  refCallback: PropTypes.func,
   renderHeader: PropTypes.func,
   renderRow: PropTypes.func.isRequired,
 }
