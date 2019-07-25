@@ -6,18 +6,12 @@
  * @flow
  */
 
-import React, { Fragment, useState, useReducer } from 'react'
-import {
-  VirtualizedList,
-  Button,
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  StatusBar,
-} from 'react-native'
+import React, { Fragment, useState, useCallback, useReducer } from 'react'
+import { Button, StyleSheet, StatusBar } from 'react-native'
+import { DataTable } from './components/DataTable'
+import { Row } from './components/Row'
 
-const rowCount = 5000
+const rowCount = 200
 const columnCount = 4
 const baseData = []
 const baseColumns = []
@@ -68,71 +62,6 @@ for (let index = 0; index < rowCount; index++) {
  * =============================================================================
  */
 
-const Cell = React.memo(
-  ({ value, rowKey, columnKey, editable, dataDispatch }) => {
-    const _onEdit = newValue =>
-      dataDispatch({ type: 'editRowCell', newValue, rowKey, columnKey })
-
-    console.log(`cell: ${value}`)
-    return (
-      <View style={styles.cell}>
-        {editable ? (
-          <TextInput value={value} onChangeText={_onEdit} />
-        ) : (
-          <Text>{value}</Text>
-        )}
-      </View>
-    )
-  }
-)
-
-const Row = React.memo(({ rowData, rowKey, columns, dataDispatch }) => {
-  console.log('====================================')
-  console.log(`Row: ${rowKey}`)
-  console.log('====================================')
-
-  return (
-    <View style={styles.row}>
-      {columns.map(col => (
-        <Cell
-          key={col.key}
-          value={rowData[col.key]}
-          rowKey={rowKey}
-          columnKey={col.key}
-          editable={col.editable}
-          dataDispatch={dataDispatch}
-        />
-      ))}
-    </View>
-  )
-})
-
-const DataTable = React.memo(
-  ({ data, keyExtractor, dataDispatch, columns, ...otherProps }) => {
-    const _renderItem = ({ item, index }) => {
-      const rowKey = keyExtractor(item)
-      return (
-        <Row
-          rowData={data[index]}
-          columns={columns}
-          rowKey={rowKey}
-          dataDispatch={dataDispatch}
-        />
-      )
-    }
-
-    console.log('Table: render')
-    return (
-      <VirtualizedList
-        data={data}
-        keyExtractor={keyExtractor}
-        renderItem={_renderItem}
-        {...otherProps}
-      />
-    )
-  }
-)
-
 const getItem = (items, index) => items[index] // TODO: Should be default prop
 const getItemCount = items => items.length // TODO: Should be default prop
 const keyExtractor = item => item.id // TODO: Should be default prop
@@ -161,6 +90,23 @@ const dataReducer = (data, action) => {
 const App = () => {
   const [isButtonOof, toggleButton] = useState(false)
   const [data, dataDispatch] = useReducer(dataReducer, baseData) // TODO: add to a context?
+  const columns = baseColumns
+
+  const renderItem = useCallback(
+    ({ item, index }) => {
+      const rowKey = keyExtractor(item)
+      return (
+        <Row
+          rowData={data[index]}
+          columns={columns}
+          rowKey={rowKey}
+          dataDispatch={dataDispatch}
+        />
+      )
+    },
+    [data, columns, dataDispatch]
+  )
+
   return (
     <Fragment>
       <StatusBar hidden />
@@ -174,8 +120,7 @@ const App = () => {
       />
       <DataTable
         data={data}
-        columns={baseColumns}
-        dataDispatch={dataDispatch}
+        renderRow={renderItem}
         keyExtractor={keyExtractor}
         getItemCount={getItemCount}
         getItem={getItem}
@@ -185,20 +130,3 @@ const App = () => {
 }
 
 export default App
-
-const styles = StyleSheet.create({
-  cell: {
-    flex: 1,
-    borderColor: 'black',
-    borderWidth: 1,
-    height: 40,
-  },
-  row: {
-    alignItems: 'stretch',
-    flex: 1,
-    flexDirection: 'row',
-  },
-  table: {
-    flex: 1,
-  },
-})

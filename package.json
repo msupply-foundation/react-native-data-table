@@ -5,8 +5,9 @@
   "repository": "https://github.com/sussol/react-native-data-table.git",
   "author": "Sustainable Solutions (NZ) Ltd.",
   "license": "MIT",
+  "main": "index.js",
   "scripts": {
-    "start": "react-native start",
+    "build": "",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -19,7 +20,7 @@
     "@babel/runtime": "^7.5.1",
     "@react-native-community/eslint-config": "^0.0.5",
     "babel-jest": "^24.8.0",
-    "eslint": "5.16.0",
+    "eslint": "^5.16.0",
     "eslint-plugin-jest": "^22.13.6",
     "eslint-plugin-prettier": "^3.1.0",
     "jest": "^24.8.0",
