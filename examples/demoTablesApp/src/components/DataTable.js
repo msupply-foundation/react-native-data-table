@@ -28,7 +28,10 @@ DataTable.propTypes = {
   renderHeader: PropTypes.func,
   renderRow: PropTypes.func.isRequired,
 }
-DataTable.defaultProps = {}
+DataTable.defaultProps = {
+  getItem: (items, index) => items[index],
+  getItemCount: items => items.length,
+}
 
 const defaultStyles = StyleSheet.create({
   virtualizedList: {

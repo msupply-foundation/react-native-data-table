@@ -7,9 +7,10 @@
  */
 
 import React, { Fragment, useState, useCallback, useReducer } from 'react'
-import { Button, StyleSheet, StatusBar } from 'react-native'
+import { Button, StatusBar } from 'react-native'
 import { DataTable } from './components/DataTable'
 import { Row } from './components/Row'
+import { Cell } from './components/Cell'
 
 const rowCount = 200
 const columnCount = 4
@@ -62,8 +63,6 @@ for (let index = 0; index < rowCount; index++) {
  * =============================================================================
  */
 
-const getItem = (items, index) => items[index] // TODO: Should be default prop
-const getItemCount = items => items.length // TODO: Should be default prop
 const keyExtractor = item => item.id // TODO: Should be default prop
 const dataReducer = (data, action) => {
   switch (action.type) {
@@ -92,19 +91,35 @@ const App = () => {
   const [data, dataDispatch] = useReducer(dataReducer, baseData) // TODO: add to a context?
   const columns = baseColumns
 
+  const renderCells = useCallback(
+    (rowData, rowKey) => {
+      return columns.map(col => (
+        <Cell
+          key={col.key}
+          value={rowData[col.key]}
+          rowKey={rowKey}
+          columnKey={col.key}
+          editable={col.editable}
+          dataDispatch={dataDispatch}
+        />
+      ))
+    },
+    [columns, dataDispatch]
+  )
+
   const renderItem = useCallback(
     ({ item, index }) => {
       const rowKey = keyExtractor(item)
       return (
         <Row
           rowData={data[index]}
-          columns={columns}
           rowKey={rowKey}
+          renderCells={renderCells}
           dataDispatch={dataDispatch}
         />
       )
     },
-    [data, columns, dataDispatch]
+    [data, renderCells, dataDispatch]
   )
 
   return (
@@ -122,8 +137,6 @@ const App = () => {
         data={data}
         renderRow={renderItem}
         keyExtractor={keyExtractor}
-        getItemCount={getItemCount}
-        getItem={getItem}
       />
     </Fragment>
   )
