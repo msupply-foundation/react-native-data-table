@@ -41,7 +41,9 @@ const dataReducer = (data, action) => {
       const { newValue, rowKey, columnKey } = action
       const rowIndex = data.findIndex(row => keyExtractor(row) === rowKey)
 
-      // Immutable array editing
+      // Immutable array editing so only the row/cell edited are re-rendered.
+      // If you don't do this, every row will re-render as well as the cell
+      // edited.
       return data.map((row, index) => {
         if (index !== rowIndex) {
           return row
