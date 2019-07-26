@@ -3,9 +3,9 @@ import PropTypes from 'prop-types'
 import { View, Text, TextInput, StyleSheet, ViewPropTypes } from 'react-native'
 
 export const Cell = React.memo(
-  ({ value, rowKey, columnKey, editable, dataDispatch }) => {
+  ({ value, rowKey, columnKey, editable, editAction, dataDispatch }) => {
     const _onEdit = newValue =>
-      dataDispatch({ type: 'editRowCell', newValue, rowKey, columnKey })
+      dataDispatch(editAction(newValue, rowKey, columnKey))
 
     console.log(`cell: ${value}`)
     return (

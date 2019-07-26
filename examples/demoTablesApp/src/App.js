@@ -37,8 +37,8 @@ for (let index = 0; index < rowCount; index++) {
 const keyExtractor = item => item.id
 const dataReducer = (data, action) => {
   switch (action.type) {
-    case 'editRowCell':
-      const { newValue, rowKey, columnKey } = action
+    case 'editCell':
+      const { value, rowKey, columnKey } = action
       const rowIndex = data.findIndex(row => keyExtractor(row) === rowKey)
 
       // Immutable array editing so only the row/cell edited are re-rendered.
@@ -49,7 +49,7 @@ const dataReducer = (data, action) => {
           return row
         }
         const rowEdited = { ...row }
-        rowEdited[columnKey] = newValue
+        rowEdited[columnKey] = value
         return rowEdited
       })
     case 'reverseData':
@@ -58,6 +58,14 @@ const dataReducer = (data, action) => {
       return data
   }
 }
+
+// Action yay
+const editCell = (value, rowKey, columnKey) => ({
+  type: 'editCell',
+  value,
+  rowKey,
+  columnKey,
+})
 
 const App = () => {
   const [isButtonOof, toggleButton] = useState(false)
@@ -73,6 +81,7 @@ const App = () => {
           rowKey={rowKey}
           columnKey={col.key}
           editable={col.editable}
+          editAction={editCell}
           dataDispatch={dataDispatch}
         />
       ))
