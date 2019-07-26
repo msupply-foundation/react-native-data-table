@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "start": "react-native start",
+    "runa": "react-native run-android",
+    "log": "react-native log-android",
     "test": "jest",
     "lint": "eslint ."
   },
