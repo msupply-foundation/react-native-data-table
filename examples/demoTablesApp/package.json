@@ -6,6 +6,8 @@
     "start": "react-native start",
     "runa": "react-native run-android",
     "log": "react-native log-android",
+    "shake": "adb shell input keyevent KEYCODE_MENU",
+    "rr": "adb shell input text \"RR\"",
     "test": "jest",
     "lint": "eslint ."
   },
