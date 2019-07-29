@@ -11,9 +11,10 @@ import { Button, StatusBar } from 'react-native'
 import { DataTable } from './components/DataTable'
 import { Row } from './components/Row'
 import { Cell } from './components/Cell'
+import { EditableCell } from './components/EditableCell'
 
 // Configurable constants for demo data volume
-const rowCount = 10
+const rowCount = 100
 const columnCount = 4
 
 const baseData = []
@@ -74,17 +75,21 @@ const App = () => {
 
   const renderCells = useCallback(
     (rowData, rowKey) => {
-      return columns.map(col => (
-        <Cell
-          key={col.key}
-          value={rowData[col.key]}
-          rowKey={rowKey}
-          columnKey={col.key}
-          editable={col.editable}
-          editAction={editCell}
-          dataDispatch={dataDispatch}
-        />
-      ))
+      return columns.map(col => {
+        if (col.editable) {
+          return (
+            <EditableCell
+              key={col.key}
+              value={rowData[col.key]}
+              rowKey={rowKey}
+              columnKey={col.key}
+              editAction={editCell}
+              dataDispatch={dataDispatch}
+            />
+          )
+        }
+        return <Cell key={col.key} value={rowData[col.key]} />
+      })
     },
     [columns, dataDispatch]
   )
