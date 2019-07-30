@@ -13,7 +13,7 @@ import { Row } from './components/Row'
 import { Cell } from './components/Cell'
 import { EditableCell } from './components/EditableCell'
 
-// Configurable constants for demo data volume
+// Configurable constants for demo data
 const rowCount = 100
 const columnCount = 4
 
@@ -36,6 +36,8 @@ for (let index = 0; index < rowCount; index++) {
 }
 
 const keyExtractor = item => item.id
+
+// Reducers
 const dataReducer = (data, action) => {
   switch (action.type) {
     case 'editCell':
@@ -60,7 +62,22 @@ const dataReducer = (data, action) => {
   }
 }
 
-// Action yay
+const extraDataReducer = (extraData, action) => {
+  const newExtraData = { ...extraData }
+  switch (action.type) {
+    case 'setFocus':
+      const { rowKey, columnKey } = action
+      newExtraData.focusedCell = {
+        focusedRow: rowKey,
+        focusedColumn: columnKey,
+      }
+      return newExtraData
+    default:
+      return extraData
+  }
+}
+
+// Actions
 const editCell = (value, rowKey, columnKey) => ({
   type: 'editCell',
   value,
@@ -68,45 +85,58 @@ const editCell = (value, rowKey, columnKey) => ({
   columnKey,
 })
 
+const focusAction = (rowKey, columnKey) => ({
+  type: 'setFocus',
+  rowKey,
+  columnKey,
+})
+
 const App = () => {
   const [isButtonOof, toggleButton] = useState(false)
   const [data, dataDispatch] = useReducer(dataReducer, baseData)
+  const [extraData, extraDataDispatch] = useReducer(extraDataReducer, [])
   const columns = baseColumns
 
   const renderCells = useCallback(
-    (rowData, rowKey) => {
+    (rowData, rowExtraData = {}, rowKey) => {
       return columns.map(col => {
         if (col.editable) {
+          const { isFocused } = rowExtraData
+          const { key: colKey } = col
           return (
             <EditableCell
-              key={col.key}
-              value={rowData[col.key]}
+              key={colKey}
+              value={rowData[colKey]}
               rowKey={rowKey}
-              columnKey={col.key}
+              columnKey={colKey}
               editAction={editCell}
+              isFocused={isFocused}
               dataDispatch={dataDispatch}
+              focusAction={focusAction}
+              extraDataDispatch={extraDataDispatch}
             />
           )
         }
         return <Cell key={col.key} value={rowData[col.key]} />
       })
     },
-    [columns, dataDispatch]
+    [columns]
   )
 
-  const renderItem = useCallback(
+  const renderRow = useCallback(
     ({ item, index }) => {
       const rowKey = keyExtractor(item)
       return (
         <Row
           rowData={data[index]}
+          rowExtraData={extraData[index]}
           rowKey={rowKey}
           renderCells={renderCells}
           dataDispatch={dataDispatch}
         />
       )
     },
-    [data, renderCells, dataDispatch]
+    [data, extraData, renderCells]
   )
 
   return (
@@ -122,7 +152,8 @@ const App = () => {
       />
       <DataTable
         data={data}
-        renderRow={renderItem}
+        extraData={extraData}
+        renderRow={renderRow}
         keyExtractor={keyExtractor}
       />
     </Fragment>

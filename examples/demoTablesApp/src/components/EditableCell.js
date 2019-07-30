@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import {
   View,
@@ -23,10 +23,21 @@ import { Cell } from './Cell'
  * @param {func} dataDispatch
  */
 export const EditableCell = React.memo(
-  ({ value, rowKey, columnKey, disabled, editAction, dataDispatch }) => {
-    const [isFocused, setFocused] = useState(false)
+  ({
+    value,
+    rowKey,
+    columnKey,
+    disabled,
+    editAction,
+    isFocused,
+    focusAction,
+    dataDispatch,
+    extraDataDispatch,
+  }) => {
     const _onEdit = newValue =>
       dataDispatch(editAction(newValue, rowKey, columnKey))
+
+    const _focusAction = () => extraDataDispatch(focusAction(rowKey, columnKey))
 
     console.log(`EditableCell: ${value}`)
 
@@ -41,7 +52,7 @@ export const EditableCell = React.memo(
     // feedback to resemble a TextInput regardless of focus.
     if (!isFocused) {
       return (
-        <TouchableWithoutFeedback onPress={() => setFocused(!isFocused)}>
+        <TouchableWithoutFeedback onPress={_focusAction}>
           <View style={defaultStyles.cell}>
             <Text>{value}</Text>
           </View>
@@ -56,7 +67,7 @@ export const EditableCell = React.memo(
           style={defaultStyles.editableCell}
           value={value}
           onChangeText={_onEdit}
-          autoFocus
+          autoFocus={isFocused}
         />
       </View>
     )
