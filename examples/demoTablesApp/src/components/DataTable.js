@@ -23,12 +23,13 @@ export const DataTable = React.memo(({ renderRow, ...otherProps }) => (
 
 DataTable.propTypes = {
   ...VirtualizedListPropTypes,
-  listViewStyle: PropTypes.object,
-  refCallback: PropTypes.func,
   renderHeader: PropTypes.func,
   renderRow: PropTypes.func.isRequired,
 }
-DataTable.defaultProps = {}
+DataTable.defaultProps = {
+  getItem: (items, index) => items[index],
+  getItemCount: items => items.length,
+}
 
 const defaultStyles = StyleSheet.create({
   virtualizedList: {

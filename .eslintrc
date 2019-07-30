@@ -1,14 +1,7 @@
 {
-  "extends": "airbnb",
-  "parser": "babel-eslint",
+  "root": true,
+  "extends": "@react-native-community",
   "rules": {
-    "no-param-reassign": "off",
-    "jsx-boolean-value": "off",
-    "no-use-before-define": "off",
-    "object-shorthand": "off",
-    "strict": 0,
-    "no-confusing-arrow": ["error", {"allowParens": true}],
-    "global-require": "off",
-    "react/jsx-boolean-value": "off",
+    "semi": 0
   }
 }
