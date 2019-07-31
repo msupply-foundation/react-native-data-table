@@ -30,14 +30,15 @@ export const EditableCell = React.memo(
     disabled,
     editAction,
     isFocused,
-    focusAction,
     dataDispatch,
-    extraDataDispatch,
+    focusCell,
+    focusNextCell,
   }) => {
     const _onEdit = newValue =>
       dataDispatch(editAction(newValue, rowKey, columnKey))
 
-    const _focusAction = () => extraDataDispatch(focusAction(rowKey, columnKey))
+    const _focusCell = () => focusCell(rowKey, columnKey)
+    const _focusNextCell = () => focusNextCell(rowKey, columnKey)
 
     console.log(`EditableCell: ${value}`)
 
@@ -52,7 +53,7 @@ export const EditableCell = React.memo(
     // feedback to resemble a TextInput regardless of focus.
     if (!isFocused) {
       return (
-        <TouchableWithoutFeedback onPress={_focusAction}>
+        <TouchableWithoutFeedback onPress={_focusCell}>
           <View style={defaultStyles.cell}>
             <Text>{value}</Text>
           </View>
@@ -68,6 +69,7 @@ export const EditableCell = React.memo(
           value={value}
           onChangeText={_onEdit}
           autoFocus={isFocused}
+          onSubmitEditing={_focusNextCell}
         />
       </View>
     )
@@ -84,6 +86,7 @@ EditableCell.propTypes = {
 EditableCell.defaultProps = {
   width: 1,
   disabled: false,
+  isFocused: false,
 }
 
 const defaultStyles = StyleSheet.create({

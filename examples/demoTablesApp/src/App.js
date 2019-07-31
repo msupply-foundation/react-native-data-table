@@ -14,7 +14,7 @@ import { Cell } from './components/Cell'
 import { EditableCell } from './components/EditableCell'
 
 // Configurable constants for demo data
-const rowCount = 100
+const rowCount = 10
 const columnCount = 4
 
 const baseData = []
@@ -62,21 +62,6 @@ const dataReducer = (data, action) => {
   }
 }
 
-const extraDataReducer = (extraData, action) => {
-  const newExtraData = { ...extraData }
-  switch (action.type) {
-    case 'setFocus':
-      const { rowKey, columnKey } = action
-      newExtraData.focusedCell = {
-        focusedRow: rowKey,
-        focusedColumn: columnKey,
-      }
-      return newExtraData
-    default:
-      return extraData
-  }
-}
-
 // Actions
 const editCell = (value, rowKey, columnKey) => ({
   type: 'editCell',
@@ -85,23 +70,67 @@ const editCell = (value, rowKey, columnKey) => ({
   columnKey,
 })
 
-const focusAction = (rowKey, columnKey) => ({
-  type: 'setFocus',
-  rowKey,
-  columnKey,
-})
+const useFocusNext = () => {} // TODO: ?????
 
 const App = () => {
   const [isButtonOof, toggleButton] = useState(false)
+  const [currentFocusedCell, setCurrentFocusedCell] = useState({
+    currRow: null,
+    currCol: null,
+  })
   const [data, dataDispatch] = useReducer(dataReducer, baseData)
-  const [extraData, extraDataDispatch] = useReducer(extraDataReducer, [])
   const columns = baseColumns
 
-  const renderCells = useCallback(
-    (rowData, rowExtraData = {}, rowKey) => {
+  const _focusCell = useCallback(
+    (rowKey, colKey) =>
+      setCurrentFocusedCell({ currRow: rowKey, currCol: colKey }),
+    []
+  )
+
+  const _focusNextCell = useCallback(
+    (rowKey, colKey) => {
+      // Handle finding next cell to focus
+      let nextEditableColKey
+      const currentColIndex = columns.findIndex(col => col.key === colKey)
+      for (let index = currentColIndex + 1; index < columns.length; index++) {
+        if (columns[index].editable) {
+          nextEditableColKey = columns[index].key
+          break
+        }
+      }
+
+      if (nextEditableColKey) {
+        // Focus next editable cell in row
+        setCurrentFocusedCell({
+          currRow: rowKey,
+          currCol: nextEditableColKey,
+        })
+      } else {
+        // Attempt moving focus to next row
+        const nextRowIndex =
+          data.findIndex(row => keyExtractor(row) === rowKey) + 1
+        if (nextRowIndex <= data.length) {
+          // Focus first editable cell in next row
+          const nextRowKey = keyExtractor(data[nextRowIndex])
+          const firstEditableColKey = columns.find(col => col.editable).key
+          setCurrentFocusedCell({
+            currRow: nextRowKey,
+            currCol: firstEditableColKey,
+          })
+        } else {
+          // We were on the last row, so unfocus current cell
+          setCurrentFocusedCell({ currRow: null, currCol: null })
+        }
+      }
+    },
+    [data, columns]
+  )
+
+  const _renderCells = useCallback(
+    (rowData, focusedCell, rowKey) => {
       return columns.map(col => {
         if (col.editable) {
-          const { isFocused } = rowExtraData
+          const { currRow, currCol } = focusedCell
           const { key: colKey } = col
           return (
             <EditableCell
@@ -110,33 +139,33 @@ const App = () => {
               rowKey={rowKey}
               columnKey={colKey}
               editAction={editCell}
-              isFocused={isFocused}
+              isFocused={rowKey === currRow && colKey === currCol}
               dataDispatch={dataDispatch}
-              focusAction={focusAction}
-              extraDataDispatch={extraDataDispatch}
+              focusCell={_focusCell}
+              focusNextCell={_focusNextCell}
             />
           )
         }
         return <Cell key={col.key} value={rowData[col.key]} />
       })
     },
-    [columns]
+    [columns, _focusNextCell, _focusCell]
   )
 
-  const renderRow = useCallback(
-    ({ item, index }) => {
+  const _renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem
       const rowKey = keyExtractor(item)
       return (
         <Row
           rowData={data[index]}
-          rowExtraData={extraData[index]}
           rowKey={rowKey}
-          renderCells={renderCells}
-          dataDispatch={dataDispatch}
+          renderCells={_renderCells}
+          focusedCell={currentFocusedCell}
         />
       )
     },
-    [data, extraData, renderCells]
+    [data, _renderCells, currentFocusedCell]
   )
 
   return (
@@ -152,8 +181,8 @@ const App = () => {
       />
       <DataTable
         data={data}
-        extraData={extraData}
-        renderRow={renderRow}
+        extraData={currentFocusedCell}
+        renderRow={_renderRow}
         keyExtractor={keyExtractor}
       />
     </Fragment>

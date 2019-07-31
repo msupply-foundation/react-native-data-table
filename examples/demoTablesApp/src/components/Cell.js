@@ -25,7 +25,7 @@ Cell.defaultProps = {
 const defaultStyles = StyleSheet.create({
   cell: {
     flex: 1,
-    backgroundColor: 'blue',
+    backgroundColor: 'yellow',
     justifyContent: 'center',
   },
 })
