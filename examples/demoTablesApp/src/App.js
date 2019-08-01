@@ -37,17 +37,18 @@ for (let index = 0; index < rowCount; index++) {
 
 const keyExtractor = item => item.id
 
-// Reducers
-const dataReducer = (data, action) => {
+// Reducer for managing DataTable state
+const reducer = (state, action) => {
   switch (action.type) {
-    case 'editCell':
+    case 'editCell': {
       const { value, rowKey, columnKey } = action
+      const { data } = state
       const rowIndex = data.findIndex(row => keyExtractor(row) === rowKey)
 
       // Immutable array editing so only the row/cell edited are re-rendered.
       // If you don't do this, every row will re-render as well as the cell
       // edited.
-      return data.map((row, index) => {
+      const newData = data.map((row, index) => {
         if (index !== rowIndex) {
           return row
         }
@@ -55,10 +56,59 @@ const dataReducer = (data, action) => {
         rowEdited[columnKey] = value
         return rowEdited
       })
+      return { ...state, data: newData }
+    }
     case 'reverseData':
-      return [...data.reverse()]
+      return { ...state, data: state.data.reverse() }
+    case 'focusThis': {
+      const { rowKey, columnKey } = action
+      const focusedCell = {
+        currRow: rowKey,
+        currCol: columnKey,
+      }
+      return { ...state, focusedCell }
+    }
+    case 'focusNext': {
+      const { data, columns } = state
+      const { rowKey, columnKey } = action
+      let focusedCell
+      // Handle finding next cell to focus
+      let nextEditableColKey
+      const currentColIndex = columns.findIndex(col => col.key === columnKey)
+      for (let index = currentColIndex + 1; index < columns.length; index++) {
+        if (columns[index].editable) {
+          nextEditableColKey = columns[index].key
+          break
+        }
+      }
+
+      if (nextEditableColKey) {
+        // Focus next editable cell in row
+        focusedCell = {
+          currRow: rowKey,
+          currCol: nextEditableColKey,
+        }
+      } else {
+        // Attempt moving focus to next row
+        const nextRowIndex =
+          data.findIndex(row => keyExtractor(row) === rowKey) + 1
+        if (nextRowIndex <= data.length) {
+          // Focus first editable cell in next row
+          const nextRowKey = keyExtractor(data[nextRowIndex])
+          const firstEditableColKey = columns.find(col => col.editable).key
+          focusedCell = {
+            currRow: nextRowKey,
+            currCol: firstEditableColKey,
+          }
+        } else {
+          // We were on the last row, so unfocus current cell
+          focusedCell = { currRow: null, currCol: null }
+        }
+      }
+      return { ...state, focusedCell }
+    }
     default:
-      return data
+      return state
   }
 }
 
@@ -70,64 +120,32 @@ const editCell = (value, rowKey, columnKey) => ({
   columnKey,
 })
 
-const useFocusNext = () => {} // TODO: ?????
+const focusThis = (rowKey, columnKey) => ({
+  type: 'focusThis',
+  rowKey,
+  columnKey,
+})
+
+const focusNext = (rowKey, columnKey) => ({
+  type: 'focusNext',
+  rowKey,
+  columnKey,
+})
 
 const App = () => {
   const [isButtonOof, toggleButton] = useState(false)
-  const [currentFocusedCell, setCurrentFocusedCell] = useState({
-    currRow: null,
-    currCol: null,
-  })
-  const [data, dataDispatch] = useReducer(dataReducer, baseData)
-  const columns = baseColumns
-
-  const _focusCell = useCallback(
-    (rowKey, colKey) =>
-      setCurrentFocusedCell({ currRow: rowKey, currCol: colKey }),
-    []
-  )
-
-  const _focusNextCell = useCallback(
-    (rowKey, colKey) => {
-      // Handle finding next cell to focus
-      let nextEditableColKey
-      const currentColIndex = columns.findIndex(col => col.key === colKey)
-      for (let index = currentColIndex + 1; index < columns.length; index++) {
-        if (columns[index].editable) {
-          nextEditableColKey = columns[index].key
-          break
-        }
-      }
-
-      if (nextEditableColKey) {
-        // Focus next editable cell in row
-        setCurrentFocusedCell({
-          currRow: rowKey,
-          currCol: nextEditableColKey,
-        })
-      } else {
-        // Attempt moving focus to next row
-        const nextRowIndex =
-          data.findIndex(row => keyExtractor(row) === rowKey) + 1
-        if (nextRowIndex <= data.length) {
-          // Focus first editable cell in next row
-          const nextRowKey = keyExtractor(data[nextRowIndex])
-          const firstEditableColKey = columns.find(col => col.editable).key
-          setCurrentFocusedCell({
-            currRow: nextRowKey,
-            currCol: firstEditableColKey,
-          })
-        } else {
-          // We were on the last row, so unfocus current cell
-          setCurrentFocusedCell({ currRow: null, currCol: null })
-        }
-      }
+  const [state, dispatch] = useReducer(reducer, {
+    data: baseData,
+    columns: baseColumns,
+    focusedCell: {
+      currRow: null,
+      currCol: null,
     },
-    [data, columns]
-  )
+  })
+  const { data, columns, focusedCell } = state
 
   const _renderCells = useCallback(
-    (rowData, focusedCell, rowKey) => {
+    (rowData, rowKey) => {
       return columns.map(col => {
         if (col.editable) {
           const { currRow, currCol } = focusedCell
@@ -140,16 +158,16 @@ const App = () => {
               columnKey={colKey}
               editAction={editCell}
               isFocused={rowKey === currRow && colKey === currCol}
-              dataDispatch={dataDispatch}
-              focusCell={_focusCell}
-              focusNextCell={_focusNextCell}
+              dispatch={dispatch}
+              focusAction={focusThis}
+              focusNextAction={focusNext}
             />
           )
         }
         return <Cell key={col.key} value={rowData[col.key]} />
       })
     },
-    [columns, _focusNextCell, _focusCell]
+    [columns, focusedCell]
   )
 
   const _renderRow = useCallback(
@@ -157,15 +175,10 @@ const App = () => {
       const { item, index } = listItem
       const rowKey = keyExtractor(item)
       return (
-        <Row
-          rowData={data[index]}
-          rowKey={rowKey}
-          renderCells={_renderCells}
-          focusedCell={currentFocusedCell}
-        />
+        <Row rowData={data[index]} rowKey={rowKey} renderCells={_renderCells} />
       )
     },
-    [data, _renderCells, currentFocusedCell]
+    [data, _renderCells]
   )
 
   return (
@@ -173,7 +186,7 @@ const App = () => {
       <StatusBar hidden />
       <Button
         title={'sort data'}
-        onPress={() => dataDispatch({ type: 'reverseData' })}
+        onPress={() => dispatch({ type: 'reverseData' })}
       />
       <Button
         title={isButtonOof ? 'oof' : 'Press me'}
@@ -181,7 +194,7 @@ const App = () => {
       />
       <DataTable
         data={data}
-        extraData={currentFocusedCell}
+        extraData={state}
         renderRow={_renderRow}
         keyExtractor={keyExtractor}
       />

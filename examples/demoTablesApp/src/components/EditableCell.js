@@ -20,7 +20,7 @@ import { Cell } from './Cell'
  * @param {string|number} columnKey
  * @param {bool} disabled
  * @param {func} editAction
- * @param {func} dataDispatch
+ * @param {func} dispatch
  */
 export const EditableCell = React.memo(
   ({
@@ -30,15 +30,15 @@ export const EditableCell = React.memo(
     disabled,
     editAction,
     isFocused,
-    dataDispatch,
-    focusCell,
-    focusNextCell,
+    dispatch,
+    focusAction,
+    focusNextAction,
   }) => {
     const _onEdit = newValue =>
-      dataDispatch(editAction(newValue, rowKey, columnKey))
+      dispatch(editAction(newValue, rowKey, columnKey))
 
-    const _focusCell = () => focusCell(rowKey, columnKey)
-    const _focusNextCell = () => focusNextCell(rowKey, columnKey)
+    const _focusCell = () => dispatch(focusAction(rowKey, columnKey))
+    const _focusNextCell = () => dispatch(focusNextAction(rowKey, columnKey))
 
     console.log(`EditableCell: ${value}`)
 
