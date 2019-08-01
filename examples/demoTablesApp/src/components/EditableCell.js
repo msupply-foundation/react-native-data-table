@@ -40,7 +40,7 @@ export const EditableCell = React.memo(
     const _focusCell = () => dispatch(focusAction(rowKey, columnKey))
     const _focusNextCell = () => dispatch(focusNextAction(rowKey, columnKey))
 
-    console.log(`EditableCell: ${value}`)
+    // console.log(`EditableCell: ${value}`)
 
     // Render a plain Cell if disabled.
     if (disabled) {

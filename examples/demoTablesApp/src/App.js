@@ -6,7 +6,13 @@
  * @flow
  */
 
-import React, { Fragment, useState, useCallback, useReducer } from 'react'
+import React, {
+  Fragment,
+  useState,
+  useCallback,
+  useReducer,
+  useLayoutEffect,
+} from 'react'
 import { Button, StatusBar } from 'react-native'
 import { DataTable } from './components/DataTable'
 import { Row } from './components/Row'
@@ -14,15 +20,15 @@ import { Cell } from './components/Cell'
 import { EditableCell } from './components/EditableCell'
 
 // Configurable constants for demo data
-const rowCount = 10
-const columnCount = 4
+const rowCount = 200
+const columnCount = 10
 
 const baseData = []
 const baseColumns = []
 
 // Make columns definition used in demo app
 for (let index = 0; index < columnCount; index++) {
-  baseColumns.push({ key: `col${index}`, editable: index === columnCount - 1 }) // index === columnCount - 1
+  baseColumns.push({ key: `col${index}`, editable: index > columnCount - 5 }) // index === columnCount - 1
 }
 
 // Generate data for use in demo app
@@ -60,7 +66,7 @@ const reducer = (state, action) => {
     }
     case 'reverseData':
       return { ...state, data: state.data.reverse() }
-    case 'focusThis': {
+    case 'focusThisCell': {
       const { rowKey, columnKey } = action
       const focusedCell = {
         currRow: rowKey,
@@ -68,7 +74,7 @@ const reducer = (state, action) => {
       }
       return { ...state, focusedCell }
     }
-    case 'focusNext': {
+    case 'focusNextCell': {
       const { data, columns } = state
       const { rowKey, columnKey } = action
       let focusedCell
@@ -92,7 +98,8 @@ const reducer = (state, action) => {
         // Attempt moving focus to next row
         const nextRowIndex =
           data.findIndex(row => keyExtractor(row) === rowKey) + 1
-        if (nextRowIndex <= data.length) {
+
+        if (nextRowIndex < data.length) {
           // Focus first editable cell in next row
           const nextRowKey = keyExtractor(data[nextRowIndex])
           const firstEditableColKey = columns.find(col => col.editable).key
@@ -121,18 +128,20 @@ const editCell = (value, rowKey, columnKey) => ({
 })
 
 const focusThis = (rowKey, columnKey) => ({
-  type: 'focusThis',
+  type: 'focusThisCell',
   rowKey,
   columnKey,
 })
 
 const focusNext = (rowKey, columnKey) => ({
-  type: 'focusNext',
+  type: 'focusNextCell',
   rowKey,
   columnKey,
 })
 
 const App = () => {
+  const startTime = Date.now()
+
   const [isButtonOof, toggleButton] = useState(false)
   const [state, dispatch] = useReducer(reducer, {
     data: baseData,
@@ -145,10 +154,10 @@ const App = () => {
   const { data, columns, focusedCell } = state
 
   const _renderCells = useCallback(
-    (rowData, rowKey) => {
+    (rowData, rowKey, currCell) => {
+      const { currRow, currCol } = currCell
       return columns.map(col => {
         if (col.editable) {
-          const { currRow, currCol } = focusedCell
           const { key: colKey } = col
           return (
             <EditableCell
@@ -167,7 +176,7 @@ const App = () => {
         return <Cell key={col.key} value={rowData[col.key]} />
       })
     },
-    [columns, focusedCell]
+    [columns]
   )
 
   const _renderRow = useCallback(
@@ -175,12 +184,22 @@ const App = () => {
       const { item, index } = listItem
       const rowKey = keyExtractor(item)
       return (
-        <Row rowData={data[index]} rowKey={rowKey} renderCells={_renderCells} />
+        <Row
+          rowData={data[index]}
+          rowKey={rowKey}
+          renderCells={_renderCells}
+          focusedCell={focusedCell}
+        />
       )
     },
-    [data, _renderCells]
+    [data, _renderCells, focusedCell]
   )
 
+  useLayoutEffect(() => {
+    console.log('===============Layout time=====================')
+    console.log(Date.now() - startTime)
+    console.log('====================================')
+  })
   return (
     <Fragment>
       <StatusBar hidden />
