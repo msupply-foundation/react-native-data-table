@@ -18,18 +18,20 @@ import { DataTable } from './components/DataTable'
 import { Row } from './components/Row'
 import { Cell } from './components/Cell'
 import { EditableCell } from './components/EditableCell'
+import { TouchableCell } from './components/TouchableCell'
 
 // Configurable constants for demo data
 const rowCount = 200
-const columnCount = 10
 
 const baseData = []
-const baseColumns = []
-
-// Make columns definition used in demo app
-for (let index = 0; index < columnCount; index++) {
-  baseColumns.push({ key: `col${index}`, editable: index > columnCount - 5 }) // index === columnCount - 1
-}
+const baseColumns = [
+  { key: 1, type: 'cell' },
+  { key: 2, type: 'cell' },
+  { key: 3, type: 'cell' },
+  { key: 4, type: 'touchable' },
+  { key: 5, type: 'editable' },
+  { key: 6, type: 'editable' },
+]
 
 // Generate data for use in demo app
 for (let index = 0; index < rowCount; index++) {
@@ -66,23 +68,49 @@ const reducer = (state, action) => {
     }
     case 'reverseData':
       return { ...state, data: state.data.reverse() }
-    case 'focusThisCell': {
+    case 'focusNone': {
+      // Clear currently focused Cell
+      const { dataState, currentFocusedRowKey } = state
+      const newDataState = new Map(dataState)
+
+      const currentRowState = newDataState.get(currentFocusedRowKey)
+      newDataState.set(currentFocusedRowKey, {
+        ...currentRowState,
+        focusedColumn: null,
+      })
+
+      return { ...state, dataState: newDataState }
+    }
+    case 'focusCell': {
+      // Clear any existing focus and focus cell specified in action
       const { rowKey, columnKey } = action
-      const focusedCell = {
-        currRow: rowKey,
-        currCol: columnKey,
+      const { dataState, currentFocusedRowKey } = state
+      let newDataState
+
+      if (currentFocusedRowKey && rowKey !== currentFocusedRowKey) {
+        newDataState = reducer(state, focusNone()).dataState
+      } else {
+        newDataState = new Map(dataState)
       }
-      return { ...state, focusedCell }
+
+      // Update focusedColumn in specified row
+      const nextRowState = newDataState.get(rowKey)
+      newDataState.set(rowKey, {
+        ...nextRowState,
+        focusedColumn: columnKey,
+      })
+
+      return { ...state, dataState: newDataState, currentFocusedRowKey: rowKey }
     }
     case 'focusNextCell': {
       const { data, columns } = state
       const { rowKey, columnKey } = action
-      let focusedCell
+      let nextCell = [null, null]
       // Handle finding next cell to focus
       let nextEditableColKey
       const currentColIndex = columns.findIndex(col => col.key === columnKey)
       for (let index = currentColIndex + 1; index < columns.length; index++) {
-        if (columns[index].editable) {
+        if (columns[index].type === 'editable') {
           nextEditableColKey = columns[index].key
           break
         }
@@ -90,10 +118,7 @@ const reducer = (state, action) => {
 
       if (nextEditableColKey) {
         // Focus next editable cell in row
-        focusedCell = {
-          currRow: rowKey,
-          currCol: nextEditableColKey,
-        }
+        nextCell = [rowKey, nextEditableColKey]
       } else {
         // Attempt moving focus to next row
         const nextRowIndex =
@@ -102,17 +127,16 @@ const reducer = (state, action) => {
         if (nextRowIndex < data.length) {
           // Focus first editable cell in next row
           const nextRowKey = keyExtractor(data[nextRowIndex])
-          const firstEditableColKey = columns.find(col => col.editable).key
-          focusedCell = {
-            currRow: nextRowKey,
-            currCol: firstEditableColKey,
-          }
+          const firstEditableColKey = columns.find(
+            col => col.type === 'editable'
+          ).key
+          nextCell = [nextRowKey, firstEditableColKey]
         } else {
-          // We were on the last row, so unfocus current cell
-          focusedCell = { currRow: null, currCol: null }
+          // We were on the last row and last column, so unfocus current cell
+          return reducer(state, focusNone())
         }
       }
-      return { ...state, focusedCell }
+      return reducer(state, focusCell(...nextCell))
     }
     default:
       return state
@@ -127,8 +151,8 @@ const editCell = (value, rowKey, columnKey) => ({
   columnKey,
 })
 
-const focusThis = (rowKey, columnKey) => ({
-  type: 'focusThisCell',
+const focusCell = (rowKey, columnKey) => ({
+  type: 'focusCell',
   rowKey,
   columnKey,
 })
@@ -139,41 +163,64 @@ const focusNext = (rowKey, columnKey) => ({
   columnKey,
 })
 
+const focusNone = () => ({
+  type: 'focusNone',
+})
+
+const selectRow = (rowKey, columnKey) => ({
+  type: 'focusNextCell',
+  rowKey,
+  columnKey,
+})
+
+const baseState = {
+  data: baseData,
+  dataState: new Map(),
+  columns: baseColumns,
+  currentFocusedRowKey: null,
+}
+
 const App = () => {
-  const startTime = Date.now()
+  const startTime = Date.now() // Delete me
 
   const [isButtonOof, toggleButton] = useState(false)
-  const [state, dispatch] = useReducer(reducer, {
-    data: baseData,
-    columns: baseColumns,
-    focusedCell: {
-      currRow: null,
-      currCol: null,
-    },
-  })
-  const { data, columns, focusedCell } = state
+  const [state, dispatch] = useReducer(reducer, baseState)
+  const { data, dataState, columns } = state
 
   const _renderCells = useCallback(
-    (rowData, rowKey, currCell) => {
-      const { currRow, currCol } = currCell
-      return columns.map(col => {
-        if (col.editable) {
-          const { key: colKey } = col
-          return (
-            <EditableCell
-              key={colKey}
-              value={rowData[colKey]}
-              rowKey={rowKey}
-              columnKey={colKey}
-              editAction={editCell}
-              isFocused={rowKey === currRow && colKey === currCol}
-              dispatch={dispatch}
-              focusAction={focusThis}
-              focusNextAction={focusNext}
-            />
-          )
+    (rowData, rowState = {}, rowKey) => {
+      return columns.map(column => {
+        const { key: colKey, type } = column
+        switch (type) {
+          case 'editable':
+            return (
+              <EditableCell
+                key={colKey}
+                value={rowData[colKey]}
+                rowKey={rowKey}
+                columnKey={colKey}
+                editAction={editCell}
+                isFocused={colKey === rowState.focusedColumn}
+                focusAction={focusCell}
+                focusNextAction={focusNext}
+                dispatch={dispatch}
+              />
+            )
+          case 'touchable':
+            return (
+              <TouchableCell
+                key={colKey}
+                value={rowData[colKey]}
+                rowKey={rowKey}
+                columnKey={colKey}
+                selected
+                onPressAction={selectRow}
+                dispatch={dispatch}
+              />
+            )
+          default:
+            return <Cell key={colKey} value={rowData[colKey]} />
         }
-        return <Cell key={col.key} value={rowData[col.key]} />
       })
     },
     [columns]
@@ -186,13 +233,13 @@ const App = () => {
       return (
         <Row
           rowData={data[index]}
+          rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           renderCells={_renderCells}
-          focusedCell={focusedCell}
         />
       )
     },
-    [data, _renderCells, focusedCell]
+    [data, dataState, _renderCells]
   )
 
   useLayoutEffect(() => {

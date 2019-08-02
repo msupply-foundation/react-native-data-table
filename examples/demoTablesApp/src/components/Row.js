@@ -2,32 +2,17 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { View, StyleSheet, ViewPropTypes } from 'react-native'
 
-const RowComponent = ({ rowData, rowKey, renderCells, focusedCell }) => {
-  // console.log('====================================')
+const RowComponent = ({ rowData, rowState, rowKey, renderCells }) => {
   console.log(`Row: ${rowKey}`)
-  // console.log('====================================')
 
   return (
     <View style={defaultStyles.row}>
-      {renderCells(rowData, rowKey, focusedCell)}
+      {renderCells(rowData, rowState, rowKey)}
     </View>
   )
 }
 
-const areEqual = (prevProps, nextProps) => {
-  if (
-    Object.is(prevProps.rowData, nextProps.rowData) &&
-    Object.is(prevProps.renderCells, nextProps.renderCells) &&
-    Object.is(prevProps.rowKey, nextProps.rowKey) &&
-    !Object.is(prevProps.rowKey, prevProps.focusedCell.currRow) && // subtle difference warning
-    !Object.is(nextProps.rowKey, nextProps.focusedCell.currRow)
-  ) {
-    return true
-  }
-  return false
-}
-
-export const Row = React.memo(RowComponent, areEqual)
+export const Row = React.memo(RowComponent)
 
 Row.propTypes = {
   // style: ViewPropTypes.style,
