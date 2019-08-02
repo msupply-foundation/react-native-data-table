@@ -40,7 +40,7 @@ export const EditableCell = React.memo(
     const _focusCell = () => dispatch(focusAction(rowKey, columnKey))
     const _focusNextCell = () => dispatch(focusNextAction(rowKey, columnKey))
 
-    console.log(`EditableCell: ${value}`)
+    console.log(`- EditableCell: ${value}`)
 
     // Render a plain Cell if disabled.
     if (disabled) {
@@ -75,13 +75,6 @@ export const EditableCell = React.memo(
     )
   }
 )
-
-EditableCell.propTypes = {
-  ...ViewPropTypes,
-  style: ViewPropTypes.style,
-  textStyle: Text.propTypes.style,
-  width: PropTypes.number,
-}
 
 EditableCell.defaultProps = {
   width: 1,
