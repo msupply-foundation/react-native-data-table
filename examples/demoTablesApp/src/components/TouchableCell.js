@@ -8,10 +8,24 @@ import {
 } from 'react-native'
 
 export const TouchableCell = React.memo(
-  ({ value, children, renderChildren, CellComponent, ...otherProps }) => {
-    console.log(`- TouchableCell: ${value}`)
+  ({
+    value,
+    rowKey,
+    columnKey,
+    onPressAction,
+    dispatch,
+    children,
+    renderChildren,
+    CellComponent,
+    ...otherProps
+  }) => {
+    console.log(`- TouchableCell: ${rowKey},${columnKey}`)
 
-    const Cell = CellComponent ? CellComponent : TouchableOpacity
+    const onPress = () => {
+      dispatch(onPressAction(rowKey, columnKey))
+    }
+
+    const Container = CellComponent ? CellComponent : TouchableOpacity
     const content = renderChildren ? (
       renderChildren(value)
     ) : (
@@ -19,9 +33,13 @@ export const TouchableCell = React.memo(
     )
 
     return (
-      <Cell style={defaultStyles.touchableCell} {...otherProps}>
+      <Container
+        style={defaultStyles.touchableCell}
+        onPress={onPress}
+        {...otherProps}
+      >
         {content}
-      </Cell>
+      </Container>
     )
   }
 )

@@ -28,11 +28,11 @@ export const EditableCell = React.memo(
     rowKey,
     columnKey,
     disabled,
-    editAction,
     isFocused,
-    dispatch,
+    editAction,
     focusAction,
     focusNextAction,
+    dispatch,
   }) => {
     const _onEdit = newValue =>
       dispatch(editAction(newValue, rowKey, columnKey))

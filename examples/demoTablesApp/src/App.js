@@ -13,22 +13,22 @@ import React, {
   useReducer,
   useLayoutEffect,
 } from 'react'
-import { Button, StatusBar } from 'react-native'
+import { Button, StatusBar, Text } from 'react-native'
 import { DataTable } from './components/DataTable'
 import { Row } from './components/Row'
 import { Cell } from './components/Cell'
 import { EditableCell } from './components/EditableCell'
-import { TouchableCell } from './components/TouchableCell'
+import { CheckableCell } from './components/CheckableCell'
 
 // Configurable constants for demo data
-const rowCount = 200
+const rowCount = 20
 
 const baseData = []
 const baseColumns = [
   { key: 1, type: 'cell' },
   { key: 2, type: 'cell' },
   { key: 3, type: 'cell' },
-  { key: 4, type: 'touchable' },
+  { key: 4, type: 'checkable' },
   { key: 5, type: 'editable' },
   { key: 6, type: 'editable' },
 ]
@@ -37,7 +37,7 @@ const baseColumns = [
 for (let index = 0; index < rowCount; index++) {
   const rowValues = {}
   baseColumns.forEach((column, columnIndex) => {
-    rowValues[column.key] = `row${index}Col${columnIndex}`
+    rowValues[column.key] = `row${index}Col${columnIndex + 1}`
   })
 
   baseData.push({ id: `r${index}`, ...rowValues })
@@ -47,6 +47,61 @@ const keyExtractor = item => item.id
 
 // Reducer for managing DataTable state
 const reducer = (state, action) => {
+  /**
+   * Immutably clears the current focus
+   * @param {object} currState  the copy of state you want affected
+   * @return {object}           A new object with no cell focused
+   */
+  const clearFocus = currState => {
+    const { dataState, currentFocusedRowKey } = currState
+    if (!currentFocusedRowKey) {
+      return currState
+    }
+
+    const newDataState = new Map(dataState)
+    const currentRowState = newDataState.get(currentFocusedRowKey)
+    newDataState.set(currentFocusedRowKey, {
+      ...currentRowState,
+      focusedColumn: null,
+    })
+
+    return { ...currState, dataState: newDataState, currentFocusedRowKey: null }
+  }
+
+  /**
+   * Immutably sets the current focus to the cell identified by `rowKey` and `columnKey`
+   * @param {object} currState  The copy of state to affect
+   * @param {string} rowKey     The key of the row the cell to focus is in
+   * @param {string} columnKey  The key of the column the cell to focus is in
+   * @return {object}           A new object with a cell focused
+   */
+  const setFocus = (currState, rowKey, columnKey) => {
+    const { dataState, currentFocusedRowKey } = currState
+    let newDataState = new Map(dataState)
+
+    // Clear previous focus if in a different row
+    if (currentFocusedRowKey && rowKey !== currentFocusedRowKey) {
+      const currentRowState = newDataState.get(currentFocusedRowKey)
+      newDataState.set(currentFocusedRowKey, {
+        ...currentRowState,
+        focusedColumn: null,
+      })
+    }
+
+    // Update focusedColumn in specified row
+    const nextRowState = newDataState.get(rowKey)
+    newDataState.set(rowKey, {
+      ...nextRowState,
+      focusedColumn: columnKey,
+    })
+
+    return {
+      ...currState,
+      dataState: newDataState,
+      currentFocusedRowKey: rowKey,
+    }
+  }
+
   switch (action.type) {
     case 'editCell': {
       const { value, rowKey, columnKey } = action
@@ -68,44 +123,15 @@ const reducer = (state, action) => {
     }
     case 'reverseData':
       return { ...state, data: state.data.reverse() }
-    case 'focusNone': {
-      // Clear currently focused Cell
-      const { dataState, currentFocusedRowKey } = state
-      const newDataState = new Map(dataState)
-
-      const currentRowState = newDataState.get(currentFocusedRowKey)
-      newDataState.set(currentFocusedRowKey, {
-        ...currentRowState,
-        focusedColumn: null,
-      })
-
-      return { ...state, dataState: newDataState }
-    }
     case 'focusCell': {
       // Clear any existing focus and focus cell specified in action
       const { rowKey, columnKey } = action
-      const { dataState, currentFocusedRowKey } = state
-      let newDataState
-
-      if (currentFocusedRowKey && rowKey !== currentFocusedRowKey) {
-        newDataState = reducer(state, focusNone()).dataState
-      } else {
-        newDataState = new Map(dataState)
-      }
-
-      // Update focusedColumn in specified row
-      const nextRowState = newDataState.get(rowKey)
-      newDataState.set(rowKey, {
-        ...nextRowState,
-        focusedColumn: columnKey,
-      })
-
-      return { ...state, dataState: newDataState, currentFocusedRowKey: rowKey }
+      return setFocus(state, rowKey, columnKey)
     }
     case 'focusNextCell': {
       const { data, columns } = state
       const { rowKey, columnKey } = action
-      let nextCell = [null, null]
+
       // Handle finding next cell to focus
       let nextEditableColKey
       const currentColIndex = columns.findIndex(col => col.key === columnKey)
@@ -118,25 +144,51 @@ const reducer = (state, action) => {
 
       if (nextEditableColKey) {
         // Focus next editable cell in row
-        nextCell = [rowKey, nextEditableColKey]
-      } else {
-        // Attempt moving focus to next row
-        const nextRowIndex =
-          data.findIndex(row => keyExtractor(row) === rowKey) + 1
-
-        if (nextRowIndex < data.length) {
-          // Focus first editable cell in next row
-          const nextRowKey = keyExtractor(data[nextRowIndex])
-          const firstEditableColKey = columns.find(
-            col => col.type === 'editable'
-          ).key
-          nextCell = [nextRowKey, firstEditableColKey]
-        } else {
-          // We were on the last row and last column, so unfocus current cell
-          return reducer(state, focusNone())
-        }
+        return setFocus(state, rowKey, nextEditableColKey)
       }
-      return reducer(state, focusCell(...nextCell))
+
+      // Attempt moving focus to next row
+      const nextRowIndex =
+        data.findIndex(row => keyExtractor(row) === rowKey) + 1
+
+      if (nextRowIndex < data.length) {
+        // Focus first editable cell in next row
+        const nextRowKey = keyExtractor(data[nextRowIndex])
+        const firstEditableColKey = columns.find(col => col.type === 'editable')
+          .key
+        return setFocus(state, nextRowKey, firstEditableColKey)
+      }
+
+      // We were on the last row and last column, so unfocus current cell
+      return clearFocus(state)
+    }
+    case 'selectRow': {
+      const { dataState } = state
+      const { rowKey } = action
+      const newDataState = new Map(dataState)
+
+      const nextRowState = newDataState.get(rowKey)
+      newDataState.set(rowKey, {
+        ...nextRowState,
+        isSelected: true,
+      })
+      console.log('================sat====================')
+      console.log(rowKey)
+      console.log('====================================')
+      return { ...state, dataState: newDataState }
+    }
+    case 'deselectRow': {
+      const { dataState } = state
+      const { rowKey } = action
+      const newDataState = new Map(dataState)
+
+      const nextRowState = newDataState.get(rowKey)
+      newDataState.set(rowKey, {
+        ...nextRowState,
+        isSelected: false,
+      })
+
+      return { ...state, dataState: newDataState }
     }
     default:
       return state
@@ -163,15 +215,24 @@ const focusNext = (rowKey, columnKey) => ({
   columnKey,
 })
 
-const focusNone = () => ({
-  type: 'focusNone',
+const selectRow = rowKey => ({
+  type: 'selectRow',
+  rowKey,
 })
 
-const selectRow = (rowKey, columnKey) => ({
-  type: 'focusNextCell',
+const deselectRow = rowKey => ({
+  type: 'deselectRow',
   rowKey,
-  columnKey,
 })
+
+const CheckedComponent = () => <Text>checked</Text>
+const UncheckedComponent = () => <Text style={{ color: 'red' }}>unchecked</Text>
+const DisabledCheckedComponent = () => (
+  <Text style={{ color: 'grey' }}>checked disabled</Text>
+)
+const DisabledUncheckedComponent = () => (
+  <Text style={{ color: 'grey' }}>unchecked disabled</Text>
+)
 
 const baseState = {
   data: baseData,
@@ -201,20 +262,26 @@ const App = () => {
                 columnKey={colKey}
                 editAction={editCell}
                 isFocused={colKey === rowState.focusedColumn}
+                disabled={rowState.disabled}
                 focusAction={focusCell}
                 focusNextAction={focusNext}
                 dispatch={dispatch}
               />
             )
-          case 'touchable':
+          case 'checkable':
             return (
-              <TouchableCell
+              <CheckableCell
                 key={colKey}
-                value={rowData[colKey]}
                 rowKey={rowKey}
                 columnKey={colKey}
-                selected
-                onPressAction={selectRow}
+                isChecked={rowState.isSelected}
+                disabled={rowState.disabled}
+                CheckedComponent={CheckedComponent}
+                UncheckedComponent={UncheckedComponent}
+                DisabledCheckedComponent={DisabledCheckedComponent}
+                DisabledUncheckedComponent={DisabledUncheckedComponent}
+                onCheckAction={selectRow}
+                onUncheckAction={deselectRow}
                 dispatch={dispatch}
               />
             )
