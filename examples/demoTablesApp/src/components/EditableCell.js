@@ -1,12 +1,10 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import {
   View,
   TouchableWithoutFeedback,
   Text,
   TextInput,
   StyleSheet,
-  ViewPropTypes,
 } from 'react-native'
 
 import { Cell } from './Cell'

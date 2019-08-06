@@ -1,90 +1,94 @@
-/* @flow weak */
+import React from 'react'
+import {
+  View,
+  TouchableWithoutFeedback,
+  Text,
+  TextInput,
+  StyleSheet,
+} from 'react-native'
+
+import { Cell } from './Cell'
 
 /**
- * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Renders a cell that on press or focus contains a TextInput for
+ * editing values.
+ *
+ * @param {string|number} value
+ * @param {string|number} rowKey
+ * @param {string|number} columnKey
+ * @param {bool} disabled
+ * @param {func} editAction
+ * @param {func} dispatch
  */
+export const EditableCell = React.memo(
+  ({
+    value,
+    rowKey,
+    columnKey,
+    disabled,
+    isFocused,
+    editAction,
+    focusAction,
+    focusNextAction,
+    dispatch,
+  }) => {
+    const _onEdit = newValue =>
+      dispatch(editAction(newValue, rowKey, columnKey))
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import {
-  StyleSheet,
-  TextInput,
-  View,
-  ViewPropTypes,
-} from 'react-native';
+    const _focusCell = () => dispatch(focusAction(rowKey, columnKey))
+    const _focusNextCell = () => dispatch(focusNextAction(rowKey, columnKey))
 
-export class EditableCell extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: 'N/A',
-    };
-    this.componentWillMount = this.componentWillMount.bind(this);
-    this.onEndEditing = this.onEndEditing.bind(this);
-  }
+    console.log(`- EditableCell: ${value}`)
 
-  componentWillMount() {
-    this.setState({
-      value: String(this.props.value),
-    });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.value !== this.state.value) {
-      this.setState({
-        value: String(nextProps.value),
-      });
+    // Render a plain Cell if disabled.
+    if (disabled) {
+      return <Cell value={value} />
     }
-  }
 
-  onEndEditing() {
-    // If the field is cleared, write null to property
-    const newValue = this.state.value === '' ? null : this.state.value;
-    this.props.onEndEditing(this.props.target, newValue);
-  }
+    // Too many TextInputs causes React Native to crash, so only
+    // truly mount the TextInput when the Cell is focused.
+    // Use TouchableWithoutFeedback because we want the appearance and
+    // feedback to resemble a TextInput regardless of focus.
+    if (!isFocused) {
+      return (
+        <TouchableWithoutFeedback onPress={_focusCell}>
+          <View style={defaultStyles.cell}>
+            <Text>{value}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      )
+    }
 
-  render() {
-    const { style, width, textStyle, refCallback, ...textInputProps } = this.props;
+    // Render a Cell with a textInput.
     return (
-      <View style={[defaultStyles.cell, style, { flex: width }]}>
+      <View style={defaultStyles.cell}>
         <TextInput
-          {...textInputProps}
-          ref={refCallback}
-          style={[defaultStyles.text, textStyle]}
-          onChangeText={(text) => this.setState({ value: text })}
-          onEndEditing={this.onEndEditing}
-          value={this.state.value}
+          style={defaultStyles.editableCell}
+          value={value}
+          onChangeText={_onEdit}
+          autoFocus={isFocused}
+          onSubmitEditing={_focusNextCell}
         />
       </View>
-    );
+    )
   }
-}
-
-EditableCell.propTypes = {
-  style: ViewPropTypes.style,
-  refCallback: PropTypes.func,
-  textStyle: TextInput.propTypes.style,
-  width: PropTypes.number,
-  onEndEditing: PropTypes.func,
-  target: PropTypes.object,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ]),
-};
+)
 
 EditableCell.defaultProps = {
   width: 1,
-  value: 'N/A',
-};
+  disabled: false,
+  isFocused: false,
+}
 
 const defaultStyles = StyleSheet.create({
   cell: {
     flex: 1,
+    backgroundColor: 'pink',
     justifyContent: 'center',
   },
-  text: {
-    right: -9, // This is to account for RN issue 1287, see https://github.com/facebook/react-native/issues/1287
+  editableCell: {
+    flex: 1,
+    backgroundColor: 'green',
+    justifyContent: 'center',
   },
-});
+})

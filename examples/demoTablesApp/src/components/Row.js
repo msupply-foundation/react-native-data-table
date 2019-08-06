@@ -1,8 +1,7 @@
-import PropTypes from 'prop-types'
 import React from 'react'
-import { View, StyleSheet, ViewPropTypes } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 
-const RowComponent = ({ rowData, rowState, rowKey, renderCells }) => {
+export const Row = ({ rowData, rowState, rowKey, renderCells }) => {
   console.log(`Row: ${rowKey}`)
 
   return (
@@ -10,13 +9,6 @@ const RowComponent = ({ rowData, rowState, rowKey, renderCells }) => {
       {renderCells(rowData, rowState, rowKey)}
     </View>
   )
-}
-
-export const Row = React.memo(RowComponent)
-
-Row.propTypes = {
-  // style: ViewPropTypes.style,
-  // onPress: PropTypes.func,
 }
 
 const defaultStyles = StyleSheet.create({

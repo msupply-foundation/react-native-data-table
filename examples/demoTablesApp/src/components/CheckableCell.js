@@ -1,6 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import { StyleSheet, TouchableOpacityPropTypes } from 'react-native'
+import { TouchableOpacityPropTypes } from 'react-native'
 
 import { TouchableCell } from './TouchableCell'
 
@@ -42,15 +41,3 @@ export const CheckableCell = React.memo(
 CheckableCell.propTypes = {
   ...TouchableOpacityPropTypes,
 }
-
-CheckableCell.defaultProps = {
-  width: 1,
-}
-
-const defaultStyles = StyleSheet.create({
-  checkableCell: {
-    flex: 1,
-    backgroundColor: 'cyan',
-    justifyContent: 'center',
-  },
-})
