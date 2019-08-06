@@ -1,39 +1,20 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { View, Text, TextInput, StyleSheet, ViewPropTypes } from 'react-native'
+import { View, Text, StyleSheet, ViewPropTypes } from 'react-native'
 
-export const Cell = React.memo(
-  ({ value, rowKey, columnKey, editable, editAction, dataDispatch }) => {
-    const _onEdit = newValue =>
-      dataDispatch(editAction(newValue, rowKey, columnKey))
-
-    console.log(`cell: ${value}`)
-    return (
-      <View style={defaultStyles.cell}>
-        {editable ? (
-          <TextInput value={value} onChangeText={_onEdit} />
-        ) : (
-          <Text>{value}</Text>
-        )}
-      </View>
-    )
-  }
-)
-
-Cell.propTypes = {
-  ...ViewPropTypes,
-  style: ViewPropTypes.style,
-  textStyle: Text.propTypes.style,
-  width: PropTypes.number,
-}
-
-Cell.defaultProps = {
-  width: 1,
-}
+export const Cell = React.memo(({ value }) => {
+  console.log(`- Cell: ${value}`)
+  return (
+    <View style={defaultStyles.cell}>
+      <Text>{value}</Text>
+    </View>
+  )
+})
 
 const defaultStyles = StyleSheet.create({
   cell: {
     flex: 1,
+    backgroundColor: 'yellow',
     justifyContent: 'center',
   },
 })

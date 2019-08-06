@@ -2,19 +2,21 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { View, StyleSheet, ViewPropTypes } from 'react-native'
 
-export const Row = React.memo(
-  ({ rowData, rowKey, renderCells, dataDispatch }) => {
-    console.log('====================================')
-    console.log(`Row: ${rowKey}`)
-    console.log('====================================')
+const RowComponent = ({ rowData, rowState, rowKey, renderCells }) => {
+  console.log(`Row: ${rowKey}`)
 
-    return <View style={defaultStyles.row}>{renderCells(rowData, rowKey)}</View>
-  }
-)
+  return (
+    <View style={defaultStyles.row}>
+      {renderCells(rowData, rowState, rowKey)}
+    </View>
+  )
+}
+
+export const Row = React.memo(RowComponent)
 
 Row.propTypes = {
-  style: ViewPropTypes.style,
-  onPress: PropTypes.func,
+  // style: ViewPropTypes.style,
+  // onPress: PropTypes.func,
 }
 
 const defaultStyles = StyleSheet.create({
