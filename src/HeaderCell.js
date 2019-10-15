@@ -1,104 +1,118 @@
-/* @flow weak */
-
-/**
- * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
- */
-
-import React from 'react';
-import PropTypes from 'prop-types';
+/* eslint-disable react/forbid-prop-types */
+import React from 'react'
+import PropTypes from 'prop-types'
 import {
-  StyleSheet,
+  TouchableOpacity,
   Text,
   View,
-  ViewPropTypes,
-  TouchableOpacity,
-} from 'react-native';
+  TouchableOpacityPropTypes,
+} from 'react-native'
 
-import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { getAdjustedStyle } from './utilities'
 /**
- * Renders a headerCell that supports being a plain View with Text or being a TouchableOpacity (with
- * callback). In the latter case Sort arrows will be rendered and controlled with isSelected and
- * isAscending props.
- * @param   {object}  props         Properties passed where component was created.
- * @prop    {boolean} isSelected    When false up+down sort arrows renderHeader, otherwise as below
- * @prop    {boolean} isAscending   Sort arrow up if true, down if false.
- * @prop    {StyleSheet} style      Style of the headerCell (View props)
- * @prop    {StyleSheet} textStyle  Style of the text in the HeaderCell
- * @prop    {number} width          flexbox flex property, gives weight to the headerCell width
- * @prop    {func} onPress          CallBack (should change sort order in parent)
- * @prop    {string}  text          Text to render in headerCell
- * @return  {React.Component}       Return TouchableOpacity with sort arrows if onPress is given a
- *                                  function. Otherwise return a View.
+ * Simple component to be used in conjunction with HeaderRow component.
+ *
+ * Renders a title and if passed, a sorting icon.
+ *
+ * @param {String}       title                 Text to display in the cell
+ * @param {String}       columnKey             The key for the column the cell heads.
+ * @param {Func}         onPressAction         Action for dispatching on press
+ * @param {Func}         dispatch              Dispatcher to backing reducer
+ * @param {ReactElement} SortAscComponent      Icon component for ascending sorting
+ * @param {ReactElement} SortDescComponent     Icon component for descending sorting
+ * @param {ReactElement} SortNeutralComponent  Icon component for neutral state, no sort.
+ * @param {Object}       containerStyle        Style object for the wrapping Touchable or View.
+ * @param {Object}       textStyle             Style object for the inner Text component.
+ * @param {Number}       width                 Optional flex property to inject into styles.
+ * @param {Bool}         isLastCell            Indicator for if this cell is the last
+ *                                             in a row. Removing the borderRight if true.
  */
-
-export function HeaderCell(props) {
-  const {
-    style,
+const HeaderCell = React.memo(
+  ({
+    title,
+    columnKey,
+    sortDirection,
+    SortAscComponent,
+    SortDescComponent,
+    SortNeutralComponent,
+    onPressAction,
+    dispatch,
+    sortable,
+    containerStyle,
     textStyle,
     width,
-    onPress,
-    text,
-    isSelected,
-    isAscending,
-    ...containerProps
-  } = props;
-
-  function renderSortArrow() {
-    if (isSelected) {
-      // isAscending = true = a to z
-      if (isAscending) return <Icon name="sort-asc" size={16} style={defaultStyles.icon} />;
-      return <Icon name="sort-desc" size={16} style={defaultStyles.icon} />;
+    isLastCell,
+    ...otherProps
+  }) => {
+    const onPress = () => {
+      dispatch(onPressAction(columnKey))
     }
-    return <Icon name="sort" size={16} style={defaultStyles.icon} />;
-  }
 
-  if (typeof onPress === 'function') {
+    const Icon = () => {
+      switch (sortDirection) {
+        case 'ASC': {
+          return SortAscComponent
+        }
+        case 'DESC': {
+          return SortDescComponent
+        }
+        default: {
+          return SortNeutralComponent
+        }
+      }
+    }
+
+    const Container = onPressAction ? TouchableOpacity : View
+
+    const internalContainerStyle = getAdjustedStyle(
+      containerStyle,
+      width,
+      isLastCell
+    )
+
     return (
-      <TouchableOpacity
-        {...containerProps}
-        style={[defaultStyles.headerCell, style, { flex: width }]}
+      <Container
+        style={internalContainerStyle}
         onPress={onPress}
+        {...otherProps}
       >
-        <Text style={textStyle}>
-          {text}
-        </Text>
-        {renderSortArrow()}
-      </TouchableOpacity>
-    );
+        <Text style={textStyle}>{title}</Text>
+        {sortable && <Icon />}
+      </Container>
+    )
   }
-  return (
-    <View {...containerProps} style={[defaultStyles.headerCell, style, { flex: width }]}>
-      <Text style={textStyle}>
-        {text}
-      </Text>
-    </View>
-  );
-}
+)
 
 HeaderCell.propTypes = {
-  isSelected: PropTypes.bool,
-  isAscending: PropTypes.bool,
-  style: ViewPropTypes.style,
-  textStyle: Text.propTypes.style,
+  ...TouchableOpacityPropTypes,
+  title: PropTypes.string.isRequired,
+  columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
+  onPressAction: PropTypes.func,
+  dispatch: PropTypes.func,
+  sortDirection: PropTypes.oneOf(['ASC', 'DESC']),
+  SortAscComponent: PropTypes.element,
+  SortDescComponent: PropTypes.element,
+  SortNeutralComponent: PropTypes.element,
+  containerStyle: PropTypes.object,
+  textStyle: PropTypes.object,
   width: PropTypes.number,
-  onPress: PropTypes.func,
-  text: PropTypes.string,
-};
+  sortable: PropTypes.bool,
+  isLastCell: PropTypes.bool,
+}
 
 HeaderCell.defaultProps = {
-  width: 1,
-};
+  dispatch: null,
+  onPressAction: null,
+  sortDirection: null,
+  SortAscComponent: null,
+  SortDescComponent: null,
+  SortNeutralComponent: null,
+  containerStyle: {},
+  textStyle: {},
+  sortable: false,
+  width: 0,
+  isLastCell: false,
+}
 
-const defaultStyles = StyleSheet.create({
-  headerCell: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  icon: {
-    marginRight: 10,
-  },
-});
+export default HeaderCell
