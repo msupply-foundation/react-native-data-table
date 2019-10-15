@@ -1,98 +1,104 @@
-/* @flow weak */
+import React from 'react'
+import PropTypes from 'prop-types'
+import { StyleSheet } from 'react-native'
+
+import TouchableCell from './TouchableCell'
 
 /**
- * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Renders a cell with an icon, supports touchable interaction and disabling
+ *
+ * @param {string|number} rowKey  Unique key associated to row cell is in
+ * @param {string|number} columnKey Unique key associated to column cell is in
+ * @param {bool}          isDisabled `true` will render disabled icons passed in
+ * @param {bool}          isChecked  `true` will render CheckedComponent rather than UncheckedComponent
+ * @param {React.element} CheckedComponent  Component to render when cell is checked
+ * @param {React.element} UncheckedComponent  Component to render when cell is checked
+ * @param {React.element} DisabledCheckedComponent  Component to render when cell is
+ *                                                  checked and disabled
+ * @param {React.element} DisabledUncheckedComponent  Component to render when cell is
+ *                                                    checked and disabled
+ * @param {func}          onCheckAction Action creator for handling checking of this cell.
+ *                                      `(rowKey, columnKey) => {...}`
+ * @param {func}          onUncheckAction Action creator for handling unchecking of this cell.
+ *                                        `(rowKey, columnKey) => {...}`
+ * @param {func}          dispatch Reducer dispatch callback for handling actions
+ * @param {Object}       containerStyle Style object for the containing Touchable component
  */
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import {
-  View,
-  ViewPropTypes,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-} from 'react-native';
+const CheckableCell = React.memo(
+  ({
+    rowKey,
+    columnKey,
+    isChecked,
+    isDisabled,
+    CheckedComponent,
+    UncheckedComponent,
+    DisabledCheckedComponent,
+    DisabledUncheckedComponent,
+    onCheckAction,
+    onUncheckAction,
+    dispatch,
+    containerStyle,
+    width,
+    isLastCell,
+    debug,
+  }) => {
+    if (debug) console.log(`- CheckableCell: ${rowKey},${columnKey}`)
 
-/**
- * Renders a CheckableCell that renders either renderIsChecked or renderIsNotChecked when isChecked
- * is true or false respectively. Whole cell returned is pressable. Callback should affect state of
- * Parent in some way that keeps the state of parent in sync with state of the CheckableCell. Kept
- * separate to maintain responsiveness of the cell.
- * @param   {object}  props             Properties passed where component was created.
- * @prop    {StyleSheet} style          Style of the CheckableCell (View props).
- * @prop    {number} width              Flexbox flex property, gives weight to the CheckableCell width
- * @prop    {object} renderIsChecked    Object is rendered as child in CheckableCell if checked.
- * @prop    {object} renderIsNotChecked Object is rendered as child in CheckableCell if notchecked.
- * @prop    {boolean} isChecked         Used to set the initial state of the cell when the
- *                                      component mounts or rerenders (e.g. table sort
- *                                      order change).
- * @return  {React.Component}           Return TouchableOpacity with child rendered according to the
- *                                      above 3 props.
- */
-export class CheckableCell extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isChecked: props.isChecked,
-    };
-    this.onPress = this.onPress.bind(this);
-  }
+    const onPressAction = isChecked ? onUncheckAction : onCheckAction
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.isChecked !== this.state.isChecked) {
-      this.setState({ isChecked: nextProps.isChecked });
-    }
-  }
-
-  onPress() {
-    this.setState({ isChecked: !this.state.isChecked });
-    this.props.onPress();
-  }
-
-  render() {
-    const {
-      isDisabled,
-      style,
-      width,
-      renderDisabled,
-      renderIsChecked,
-      renderIsNotChecked,
-    } = this.props;
-
-    if (isDisabled) {
-      let renderFunction = renderDisabled;
-      if (!renderFunction) {
-        renderFunction = this.state.isChecked ? renderIsChecked : renderIsNotChecked;
-      }
-      return (
-        // Filler function for onPress stops press through to parent component
-        <TouchableWithoutFeedback onPress={() => {}}>
-          <View style={[style, { flex: width }]}>{renderFunction()}</View>
-        </TouchableWithoutFeedback>
-      );
-    }
+    const renderCheck = isChecked
+      ? (isDisabled && DisabledCheckedComponent) || CheckedComponent
+      : (isDisabled && DisabledUncheckedComponent) || UncheckedComponent
 
     return (
-      <TouchableOpacity style={[style, { flex: width }]} onPress={() => this.onPress()}>
-        {this.state.isChecked ? renderIsChecked() : renderIsNotChecked()}
-      </TouchableOpacity>
-    );
+      <TouchableCell
+        renderChildren={renderCheck}
+        rowKey={rowKey}
+        columnKey={columnKey}
+        onPressAction={onPressAction}
+        dispatch={dispatch}
+        containerStyle={containerStyle}
+        width={width}
+        isLastCell={isLastCell}
+        isDisabled={isDisabled}
+      />
+    )
   }
-}
+)
+
+const defaultStyles = StyleSheet.create({
+  containerStyle: {},
+})
 
 CheckableCell.propTypes = {
-  style: ViewPropTypes.style,
-  width: PropTypes.number,
-  onPress: PropTypes.func,
-  renderDisabled: PropTypes.func,
-  renderIsChecked: PropTypes.func,
-  renderIsNotChecked: PropTypes.func,
+  rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
   isChecked: PropTypes.bool,
   isDisabled: PropTypes.bool,
-};
+  CheckedComponent: PropTypes.func.isRequired,
+  UncheckedComponent: PropTypes.func.isRequired,
+  DisabledCheckedComponent: PropTypes.func,
+  DisabledUncheckedComponent: PropTypes.func,
+  onCheckAction: PropTypes.func.isRequired,
+  onUncheckAction: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  containerStyle: PropTypes.object,
+  width: PropTypes.number,
+  isLastCell: PropTypes.bool,
+  debug: PropTypes.bool,
+}
 
 CheckableCell.defaultProps = {
-  width: 1,
   isChecked: false,
-};
+  DisabledCheckedComponent: null,
+  DisabledUncheckedComponent: null,
+  isDisabled: false,
+  containerStyle: defaultStyles.containerStyle,
+  width: 0,
+  isLastCell: false,
+  debug: false,
+}
+
+export default CheckableCell
