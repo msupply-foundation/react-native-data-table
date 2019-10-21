@@ -17,13 +17,25 @@ import { getAdjustedStyle } from './utilities'
  *                                   in a row. Removing the borderRight if true.
  */
 const Cell = React.memo(
-  ({ value, textStyle, viewStyle, width, isLastCell, maxLines, debug }) => {
+  ({
+    value,
+    textStyle,
+    viewStyle,
+    width,
+    isLastCell,
+    numberOfLines,
+    debug,
+  }) => {
     if (debug) console.log(`- Cell: ${value}`)
     const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell)
 
     return (
       <View style={internalViewStyle}>
-        <Text ellipsizeMode="tail" numberOfLines={maxLines} style={textStyle}>
+        <Text
+          ellipsizeMode="tail"
+          numberOfLines={numberOfLines}
+          style={textStyle}
+        >
           {value}
         </Text>
       </View>
@@ -37,7 +49,7 @@ Cell.propTypes = {
   viewStyle: PropTypes.object,
   width: PropTypes.number,
   isLastCell: PropTypes.bool,
-  maxLines: PropTypes.number,
+  numberOfLines: PropTypes.number,
   debug: PropTypes.bool,
 }
 
@@ -47,7 +59,7 @@ Cell.defaultProps = {
   viewStyle: {},
   width: 0,
   isLastCell: false,
-  maxLines: 2,
+  numberOfLines: 2,
   debug: false,
 }
 
