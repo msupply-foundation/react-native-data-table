@@ -1,66 +1,66 @@
-/* @flow weak */
+/* eslint-disable react/forbid-prop-types */
+import React from 'react'
+import PropTypes from 'prop-types'
+import { View, Text } from 'react-native'
+import { getAdjustedStyle } from './utilities'
 
 /**
- * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Renders a cell that displays a string/number value within
+ * a react-native `Text` component.
+ *
+ * @param {string|number} value      The value to render in cell
+ * @param {Object}        viewStyle  Style object for the containing View
+ * @param {Object}        textStyle  Style object for the inner Text
+ * @param {Number}        width      optional flex property to inject into styles.
+ * @param {Bool}          isLastCell Indicator for if this cell is the last
+ * @param {Number}        maxLiens   Maximum number of lines for the Text component
+ *                                   in a row. Removing the borderRight if true.
  */
+const Cell = React.memo(
+  ({
+    value,
+    textStyle,
+    viewStyle,
+    width,
+    isLastCell,
+    numberOfLines,
+    debug,
+  }) => {
+    if (debug) console.log(`- Cell: ${value}`)
+    const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell)
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ViewPropTypes,
-} from 'react-native';
-
-/**
- * Renders a Cell that supports having a string as children, or any component.
- * @param   {object}  props         Properties passed where component was created.
- * @prop    {StyleSheet} style      Style of the Cell (View props)
- * @prop    {StyleSheet} textStyle  Style of the text in the Cell
- * @prop    {number} width          Flexbox flex property, gives weight to the Cell width
- * @prop    {string}  text          Text to render in Cell
- * @return  {React.Component}       A single View with children
- */
-export function Cell(props) {
-  const { style, numberOfLines, textStyle, width, children, ...viewProps } = props;
-
-  // Render string child in a Text Component
-  if (typeof children === 'string' || typeof children === 'number') {
     return (
-      <View {...viewProps} style={[defaultStyles.cell, style, { flex: width }]}>
-        <Text numberOfLines={numberOfLines} style={textStyle}>
-          {children}
+      <View style={internalViewStyle}>
+        <Text
+          ellipsizeMode="tail"
+          numberOfLines={numberOfLines}
+          style={textStyle}
+        >
+          {value}
         </Text>
       </View>
-    );
+    )
   }
-  // Render any non-string child component(s)
-  return (
-    <View {...viewProps} style={[defaultStyles.cell, style, { flex: width }]}>
-      {children}
-    </View>
-  );
-}
+)
 
 Cell.propTypes = {
-  ...ViewPropTypes,
-  style: ViewPropTypes.style,
-  textStyle: Text.propTypes.style,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  textStyle: PropTypes.object,
+  viewStyle: PropTypes.object,
   width: PropTypes.number,
-  children: PropTypes.any,
+  isLastCell: PropTypes.bool,
   numberOfLines: PropTypes.number,
-};
+  debug: PropTypes.bool,
+}
 
 Cell.defaultProps = {
-  width: 1,
-  numberOfLines: 1,
-};
+  value: '',
+  textStyle: {},
+  viewStyle: {},
+  width: 0,
+  isLastCell: false,
+  numberOfLines: 2,
+  debug: false,
+}
 
-const defaultStyles = StyleSheet.create({
-  cell: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-});
+export default Cell
