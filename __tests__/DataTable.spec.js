@@ -7,7 +7,7 @@ import React from 'react';
 import { View, TextInput } from 'react-native';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
-import { ListView } from 'realm/react-native';
+import { ListView } from 'deprecated-react-native-listview';
 
 describe('DataTable', () => {
   const dataSource = new ListView.DataSource({
