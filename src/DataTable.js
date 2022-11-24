@@ -14,7 +14,7 @@ import {
   ViewPropTypes,
 } from 'react-native';
 
-import { ListView } from 'realm/react-native';
+import { ListView } from 'deprecated-react-native-listview';
 
 export class DataTable extends React.Component {
   constructor(props) {

@@ -1,6 +1,6 @@
 {
   "name": "react-native-data-table",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A generic table to lay out data from realm for react native",
   "repository": "https://github.com/sussol/react-native-data-table.git",
   "author": "Sustainable Solutions (NZ) Ltd.",
@@ -31,6 +31,7 @@
     ]
   },
   "dependencies": {
+    "deprecated-react-native-listview": "^0.0.8",
     "react-native-vector-icons": "^4.4.2"
   },
   "devDependencies": {
@@ -54,7 +55,6 @@
   "peerDependencies": {
     "prop-types": "*",
     "react": "*",
-    "react-native": ">= 0.44.0",
-    "realm": "*"
+    "react-native": ">= 0.44.0"
   }
 }
