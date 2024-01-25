@@ -3,7 +3,7 @@ A React Native data table written purely in JSX with React and RealmJS DB (until
 
 ## DEPRECATED
 
-Unfortunately we've stopped development of react-native apps at The mSupply Foundation, and thus this repo hasn't been maintained in a long time. react-native is amazing! We just had some unique requirements where we felt we could do better with rust and reactjs. As much as we've aspired to one day give this repo TLC, it hasn't happened so to transparently, we're finally putting this notice up. Sorry for the dead end!
+Unfortunately we've stopped development of react-native apps at The mSupply Foundation, and thus this repo hasn't been maintained in a long time. react-native is amazing! We just had some unique requirements where we felt we could do better with rust and reactjs. As much as we've aspired to one day give this repo TLC, it hasn't happened so to be transparent we're finally putting this notice up. Sorry for the dead end!
 
 ## Installation
 
