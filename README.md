@@ -1,8 +1,16 @@
 # react-native-data-table
 A React Native data table written purely in JSX with React and RealmJS DB (until refactor).
+
+## DEPRECATED
+
+Unfortunately we've stopped development of react-native apps at The mSupply Foundation, and thus this repo hasn't been maintained in a long time. react-native is amazing! We just had some unique requirements where we felt we could do better with rust and reactjs. As much as we've aspired to one day give this repo TLC, it hasn't happened so to transparently, we're finally putting this notice up. Sorry for the dead end!
+
 ## Installation
+
 `npm install --save react-native-data-table`
+
 ## Usage
+
 react-native-data-table provides a number of components for constructing a table through composition.
 
 ![data table example](https://cloud.githubusercontent.com/assets/7684221/22765506/8e24ca76-eed5-11e6-97fe-5b0da7687aca.png)
